@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-import src/*
+// import src/*
 
 def call() {
     KanikoContainerTemplate()
