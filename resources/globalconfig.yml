@@ -1,0 +1,3 @@
+builder:
+  maven:
+    goal: clean package
