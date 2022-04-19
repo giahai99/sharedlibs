@@ -15,7 +15,7 @@ def call(String filePath, Closure closure) {
   
   MavenBuilder builder = new MavenBuilder(map_var: map)
   closure.delegate = builder
-  closure.resolveStrategy = Closure.DELEGATE_FISRT
+  closure.resolveStrategy = Closure.DELEGATE_FIRST
   closure()
   
 }
