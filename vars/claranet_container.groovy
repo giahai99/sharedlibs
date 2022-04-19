@@ -1,10 +1,7 @@
 #!/usr/bin/env groovy
 
+import src/KanikoContainerTemplate
+
 def call() {
-    sh """- name: claranet
-            image: claranet/gcloud-kubectl-docker:latest
-            imagePullPolicy: Always
-            command:
-            - cat
-            tty: true"""
+    KanikoContainerTemplate()
 }
