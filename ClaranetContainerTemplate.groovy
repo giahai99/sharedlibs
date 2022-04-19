@@ -1,4 +1,4 @@
-def KanikoContainerTemplate() {
+def ClaranetContainerTemplate() {
     return """
 kind: Pod
 spec:
