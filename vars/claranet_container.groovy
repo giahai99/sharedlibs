@@ -1,7 +1,8 @@
 #!/usr/bin/env groovy
 
-import KanikoContainerTemplate
+import ClaranetContainerTemplate
 
 def call() {
-    KanikoContainerTemplate.KanikoContainerTemplate()
+    ClaranetContainerTemplate claranet = new ClaranetContainerTemplate()
+    claranet.ClaranetContainerTemplate()
 }
