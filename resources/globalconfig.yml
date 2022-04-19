@@ -1,3 +1,4 @@
 builder:
   maven:
-    goal: clean package
+    goal: clean install
+#     goal: clean package
