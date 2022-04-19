@@ -3,5 +3,5 @@
 import KanikoContainerTemplate
 
 def call() {
-    KanikoContainerTemplate()
+    KanikoContainerTemplate.KanikoContainerTemplate()
 }
