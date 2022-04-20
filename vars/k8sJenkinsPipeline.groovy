@@ -20,15 +20,16 @@ def call() {
             stage('Create secret for docker hub') {
                 steps {
                     container('claranet') {
-                        withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
-                                [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+                        script{
+                            withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
+                                    [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+                                
+                                gcloud.authenticate(key)
+                                
+                                gcloud.getClusterCredentials()
                             
-                            gcloud.authenticate(key)
-                            
-                            gcloud.getClusterCredentials()
-                        
-                            kubectl.createDockerRegistrySecret(password)
-
+                                kubectl.createDockerRegistrySecret(password)
+                            }
                         }
                     }
                 }
@@ -43,8 +44,10 @@ def call() {
                 }
                 steps {
                     container(name: 'kaniko', shell: '/busybox/sh') {
-                        gitCheckingOut.checkOut()
-                        kanikoTemplate.buildAndPushImage()
+                        script{
+                            gitCheckingOut.checkOut()
+                            kanikoTemplate.buildAndPushImage()
+                        }
                     }
                 }
             }
@@ -54,17 +57,18 @@ def call() {
             stage('Deploy App to Kubernetes') {
                 steps {
                     container('claranet') {
-                        withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]
-                        , [path: 'kv/github-token', secretValues: [[vaultKey: 'token']]]]) {
-            
-                            git.pull()
-                            
-                            kubectl.createGenericSecret(username:username, password:password)
-                            
-                            kubectl.applyFiles(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
-
-                            kubectl.setDeploymentImage()
+                        script{
+                            withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]
+                            , [path: 'kv/github-token', secretValues: [[vaultKey: 'token']]]]) {
                 
+                                git.pull()
+                                
+                                kubectl.createGenericSecret(username:username, password:password)
+                                
+                                kubectl.applyFiles(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
+
+                                kubectl.setDeploymentImage()
+                            }
                         }
                     }
                 }
@@ -75,9 +79,11 @@ def call() {
         post { 
             cleanup { 
                 container('claranet') {
+                    script{
 
                         kubectl.deleteSecretAfterRun() 
-                        
+                    
+                    }
                 }
             }
         }
