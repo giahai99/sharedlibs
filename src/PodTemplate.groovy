@@ -9,14 +9,7 @@ spec:
     image: 'jenkins/inbound-agent:4.7-1'
   ${addContainer}
   volumes:
-  - name: jenkins-docker-cfg
-    projected:
-      sources:
-      - secret:
-          name: docker-credentials
-          items:
-            - key: .dockerconfigjson
-              path: config.json
+  ${addVolumes}
 """
 }
 

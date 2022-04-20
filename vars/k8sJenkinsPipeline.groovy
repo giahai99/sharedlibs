@@ -2,12 +2,10 @@
 
 def call() {
     PodTemplate podTemplate = new PodTemplate()
-    Gcloud gcloud = new Gcloud()
-    Kubectl kubectl = new Kubectl()
-    GitCheckingOut gitCheckingOut = new GitCheckingOut()
+    Kubectl kubectl
     Git git = new Git()
     Kaniko kaniko = new Kaniko()
-  
+
     pipeline {
         agent {
             kubernetes {
@@ -18,19 +16,16 @@ def call() {
         stages {
             stage('Create secret for docker hub') {
                 steps {
-                    container('claranet') {
                         script {
                             withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
                                                                                                                                                      [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
 
-                                gcloud.authenticate(key)
+                                kubectl = new Kubectl(key,"truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com","primal-catfish-346210"
+                                ,"cluster-1","asia-southeast1-b")
 
-                                gcloud.getClusterCredentials()
-
-                                kubectl.createDockerRegistrySecret(password)
+                                kubectl.createDockerRegistrySecret("giahai99",password,"Haidepzai_kut3@yahoo.com","devops-tools")
                             }
                         }
-                    }
                 }
             }
             
@@ -41,11 +36,9 @@ def call() {
                     }
                 }
                 steps {
-                    container(name: 'kaniko', shell: '/busybox/sh') {
                         script{
-                            gitCheckingOut.checkOut()
-                            kaniko.buildAndPushImage()
-                        }
+                            git.checkOut("main","https://github.com/giahai99/devops-first-prj.git")
+                            kaniko.buildAndPushImage("giahai99/javaapp","${BUILD_NUMBER}")
                     }
                 }
             }
@@ -54,19 +47,18 @@ def call() {
         // Running Docker container, make sure port 8080 is opened in
             stage('Deploy App to Kubernetes') {
                 steps {
-                    container('claranet') {
                         script{
                             withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]
                             , [path: 'kv/github-token', secretValues: [[vaultKey: 'token']]]]) {
                 
-                                git.pull()
+                                git.pull(token, "giahai99", "devops-first-prj.git")
                                 
-                                kubectl.createGenericSecret(username:username, password:password)
+                                kubectl.createGenericSecret(secretName:"db-user-pass" ,username:username, password:password)
                                 
-                                kubectl.applyFiles(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
+                                kubectl.applyFiles("devops-tools",["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"], "devops-first-prj")
 
-                                kubectl.setDeploymentImage()
-                            }
+                                kubectl.setDeploymentImage("devops-tools","book-deployment","my-book-management","giahai99/javaapp","${BUILD_NUMBER}")
+
                         }
                     }
                 }
@@ -75,13 +67,11 @@ def call() {
         
         
         post { 
-            cleanup { 
-                container('claranet') {
+            cleanup {
                     script{
 
                         kubectl.deleteSecretAfterRun() 
-                    
-                    }
+
                 }
             }
         }
