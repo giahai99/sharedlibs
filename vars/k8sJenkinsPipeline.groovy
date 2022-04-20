@@ -46,7 +46,7 @@ def call() {
                     container(name: 'kaniko', shell: '/busybox/sh') {
                         script{
                             gitCheckingOut.checkOut()
-                            kanikoTemplate.buildAndPushImage()
+                            kaniko.buildAndPushImage()
                         }
                     }
                 }
