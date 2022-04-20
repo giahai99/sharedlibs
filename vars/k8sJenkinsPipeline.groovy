@@ -39,7 +39,7 @@ def call() {
             stage('Checkout and Build With Kaniko') {
                 agent { 
                 kubernetes {
-                    yaml kaniko.addPod()
+                    yaml kanikoTemplate.addPod()
                     }
                 }
                 steps {
