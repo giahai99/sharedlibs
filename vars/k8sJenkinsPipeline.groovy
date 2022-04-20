@@ -1,9 +1,9 @@
 #!/usr/bin/env groovy
 
 def call() {
-    ClaranetContainerTemplate claranet = new ClaranetContainerTemplate()
+    ClaranetContainerTemplate claranetTemplate = new ClaranetContainerTemplate()
     Gcloud gcloud = new Gcloud()
-    KanikoContainerTemplate kaniko = new KanikoContainerTemplate()
+    KanikoContainerTemplate kanikoTemplate = new KanikoContainerTemplate()
     Kubectl kubectl = new Kubectl()
     GitCheckingOut gitCheckingOut = new GitCheckingOut()
     Git git = new Git()
@@ -12,7 +12,7 @@ def call() {
     pipeline {
         agent {
             kubernetes {
-                yaml claranet.addPod()
+                yaml claranetTemplate.addPod()
             }
         }
 
@@ -44,7 +44,7 @@ def call() {
                 steps {
                     container(name: 'kaniko', shell: '/busybox/sh') {
                         gitCheckingOut.checkOut()
-                        kaniko.buildAndPushImage()
+                        kanikoTemplate.buildAndPushImage()
                     }
                 }
             }
