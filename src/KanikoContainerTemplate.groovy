@@ -1,4 +1,4 @@
-def KanikoContainerTemplate() {
+def addPod() {
     return """
 kind: Pod
 spec:
