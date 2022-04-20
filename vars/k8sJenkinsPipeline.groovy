@@ -6,7 +6,7 @@ def call() {
   ClaranetContainerTemplate claranet = new ClaranetContainerTemplate()
   KanikoContainerTemplate kaniko = new KanikoContainerTemplate()
   GcloudAuthentication gcloud = new GcloudAuthentication()
-  KubectlApply kubectlApply = new KubectlApply()
+  KubectlAppliation kubectlAppliation = new KubectlAppliation()
   
     pipeline {
   agent {
@@ -64,7 +64,7 @@ def call() {
                         
                         sh "kubectl --namespace=devops-tools create secret generic db-user-pass --from-literal=username=$username --from-literal=password=$password"
                         
-                        kubectlApply.KubectlApply(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
+                        kubectlAppliation.kubectlAppliation.(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
                         
                         // sh 'kubectl --namespace=devops-tools apply -f my-app-service.yml'
                         
