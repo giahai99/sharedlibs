@@ -22,7 +22,7 @@ def call() {
                   script{
                     withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
                         
-                        gcloud.GcloudAuthentication.authenticate("${key}")
+                        gcloud.authenticate("${key}")
                         
                         sh 'gcloud container clusters get-credentials cluster-1 --zone asia-southeast1-b --project primal-catfish-346210'
                     
@@ -67,7 +67,7 @@ def call() {
                         
                         sh "kubectl --namespace=devops-tools create secret generic db-user-pass --from-literal=username=$username --from-literal=password=$password"
                         
-                        kubectlAppliation.kubectlAppliation.(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
+                        kubectlAppliation.apply.(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
                         
                         // sh 'kubectl --namespace=devops-tools apply -f my-app-service.yml'
                         
