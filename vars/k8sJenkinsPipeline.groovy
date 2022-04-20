@@ -3,11 +3,15 @@
 import ClaranetContainerTemplate
 
 def call() {
-  new ClaranetContainerTemplate
+  ClaranetContainerTemplate claranet = new ClaranetContainerTemplate()
+  KanikoContainerTemplate kaniko = new KanikoContainerTemplate()
+  GcloudAuthentication gcloud = new GcloudAuthentication()
+  KubectlApply kubectlApply = new KubectlApply()
+  
     pipeline {
   agent {
     kubernetes {
-      yaml claranet_container()
+      yaml claranet.ClaranetContainerTemplate()
     }
   }
 
@@ -17,11 +21,7 @@ def call() {
                 container('claranet') {
                     withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
                         
-                        gcloud_authentication("${key}")
-                        
-                        // sh 'set +x; echo $key > key.json'
-                    
-                        // sh 'gcloud auth activate-service-account truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com --key-file=key.json --project=primal-catfish-346210'
+                        gcloud.GcloudAuthentication("${key}")
                         
                         sh 'gcloud container clusters get-credentials cluster-1 --zone asia-southeast1-b --project primal-catfish-346210'
                     
@@ -35,7 +35,7 @@ def call() {
         stage('Checkout and Build With Kaniko') {
             agent { 
               kubernetes {
-                yaml kaniko_container()
+                yaml kaniko.KanikoContainerTemplate()
                 }
             }
             steps {
@@ -64,7 +64,7 @@ def call() {
                         
                         sh "kubectl --namespace=devops-tools create secret generic db-user-pass --from-literal=username=$username --from-literal=password=$password"
                         
-                        kubectl_apply(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
+                        kubectlApply.KubectlApply(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
                         
                         // sh 'kubectl --namespace=devops-tools apply -f my-app-service.yml'
                         
