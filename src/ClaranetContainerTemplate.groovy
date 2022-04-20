@@ -1,4 +1,4 @@
-def ClaranetContainerTemplate() {
+def addPod() {
     return """
 kind: Pod
 spec:
