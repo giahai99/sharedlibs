@@ -67,14 +67,8 @@ def call() {
                         
                         sh "kubectl --namespace=devops-tools create secret generic db-user-pass --from-literal=username=$username --from-literal=password=$password"
                         
-                        kubectlAppliation.apply.(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
-                        
-                        // sh 'kubectl --namespace=devops-tools apply -f my-app-service.yml'
-                        
-                        // sh 'kubectl --namespace=devops-tools apply -f mysql-config.yml'
-                        
-                        // sh 'kubectl --namespace=devops-tools apply -f my-app-deployment.yml'
-                        
+                        kubectlAppliation.apply(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
+                                   
                         sh 'kubectl --namespace=devops-tools set image deployment/book-deployment my-book-management=giahai99/javaapp:${BUILD_NUMBER}'
                     }
                     }
