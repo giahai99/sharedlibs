@@ -19,6 +19,7 @@ def call() {
         stage('Create secret for docker hub') {
             steps {
                 container('claranet') {
+                  script{
                     withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
                         
                         gcloud.GcloudAuthentication.authenticate("${key}")
@@ -26,6 +27,7 @@ def call() {
                         sh 'gcloud container clusters get-credentials cluster-1 --zone asia-southeast1-b --project primal-catfish-346210'
                     
                         sh 'kubectl create secret docker-registry docker-credentials --docker-username=giahai99 --docker-password=84cf7c40-ee9d-4948-bd6a-b2f088afd595 --docker-email=Haidepzai_kut3@yahoo.com  --namespace=devops-tools'
+                    }
                     }
                 }
             }
@@ -53,6 +55,7 @@ def call() {
         stage('Deploy App to Kubernetes') {
             steps {
                 container('claranet') {
+                  script{
                     withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]
                     , [path: 'kv/github-token', secretValues: [[vaultKey: 'token']]]]) {
         
@@ -73,6 +76,7 @@ def call() {
                         // sh 'kubectl --namespace=devops-tools apply -f my-app-deployment.yml'
                         
                         sh 'kubectl --namespace=devops-tools set image deployment/book-deployment my-book-management=giahai99/javaapp:${BUILD_NUMBER}'
+                    }
                     }
                 }
             }
