@@ -1,9 +1,8 @@
 #!/usr/bin/env groovy
 
 def call() {
-    ClaranetContainerTemplate claranetTemplate = new ClaranetContainerTemplate()
+    PodTemplate podTemplate = new PodTemplate()
     Gcloud gcloud = new Gcloud()
-    KanikoContainerTemplate kanikoTemplate = new KanikoContainerTemplate()
     Kubectl kubectl = new Kubectl()
     GitCheckingOut gitCheckingOut = new GitCheckingOut()
     Git git = new Git()
@@ -12,7 +11,7 @@ def call() {
     pipeline {
         agent {
             kubernetes {
-                yaml claranetTemplate.addPod()
+                yaml podTemplate.addClaranetBuilder()
             }
         }
 
@@ -20,26 +19,25 @@ def call() {
             stage('Create secret for docker hub') {
                 steps {
                     container('claranet') {
-                        script{
+                        script {
                             withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
-                                    [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
-                                
+                                                                                                                                                     [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+
                                 gcloud.authenticate(key)
-                                
+
                                 gcloud.getClusterCredentials()
-                            
+
                                 kubectl.createDockerRegistrySecret(password)
                             }
                         }
                     }
                 }
             }
-        
             
             stage('Checkout and Build With Kaniko') {
                 agent { 
                 kubernetes {
-                    yaml kanikoTemplate.addPod()
+                    yaml podTemplate.addKanikoBuilder()
                     }
                 }
                 steps {
