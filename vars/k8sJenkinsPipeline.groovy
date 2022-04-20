@@ -1,17 +1,11 @@
 #!/usr/bin/env groovy
 
-import ClaranetContainerTemplate
-
 def call() {
-  ClaranetContainerTemplate claranet = new ClaranetContainerTemplate()
-  KanikoContainerTemplate kaniko = new KanikoContainerTemplate()
-  GcloudAuthentication gcloud = new GcloudAuthentication()
-  KubectlAppliation kubectlAppliation = new KubectlAppliation()
   
     pipeline {
   agent {
     kubernetes {
-      yaml claranet.ClaranetContainerTemplate()
+      yaml new ClaranetContainerTemplate.addPod()
     }
   }
 
@@ -37,7 +31,7 @@ def call() {
         stage('Checkout and Build With Kaniko') {
             agent { 
               kubernetes {
-                yaml kaniko.KanikoContainerTemplate()
+                yaml new KanikoContainerTemplate.addPod()
                 }
             }
             steps {
@@ -67,7 +61,7 @@ def call() {
                         
                         sh "kubectl --namespace=devops-tools create secret generic db-user-pass --from-literal=username=$username --from-literal=password=$password"
                         
-                        kubectlAppliation.apply(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
+                        new KubectlAppliation.apply(["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"])
                                    
                         sh 'kubectl --namespace=devops-tools set image deployment/book-deployment my-book-management=giahai99/javaapp:${BUILD_NUMBER}'
                     }
