@@ -21,7 +21,7 @@ def call() {
                 container('claranet') {
                     withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
                         
-                        gcloud.GcloudAuthentication("${key}")
+                        gcloud.GcloudAuthentication.authenticate("${key}")
                         
                         sh 'gcloud container clusters get-credentials cluster-1 --zone asia-southeast1-b --project primal-catfish-346210'
                     
