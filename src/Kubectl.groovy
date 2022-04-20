@@ -18,3 +18,10 @@ def createGenericSecret(Map config = [:]){
 def setDeploymentImage() {
   sh 'kubectl --namespace=devops-tools set image deployment/book-deployment my-book-management=giahai99/javaapp:${BUILD_NUMBER}'  
 }
+
+def deleteSecretAfterRun() {
+  sh 'kubectl --namespace=devops-tools delete secret db-user-pass --ignore-not-found=true'
+  sh 'kubectl delete secret docker-credentials -n devops-tools --ignore-not-found=true'
+ }
+
+
