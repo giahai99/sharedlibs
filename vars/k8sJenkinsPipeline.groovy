@@ -20,6 +20,7 @@ def call() {
                         script {
                             withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
                                                                                                                                                      [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+
                                 gcloud.authenticate(key,"truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com","primal-catfish-346210")
 
                                 gcloud.getClusterCredentials("cluster-1","asia-southeast1-b","primal-catfish-346210")
