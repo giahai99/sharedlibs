@@ -1,4 +1,13 @@
 #!/usr/bin/env groovy
+
+def sayHello() {
+
+
+    sh "echo hello 2"
+
+
+}
+
 class Kubectl {
 
     Kubectl() {

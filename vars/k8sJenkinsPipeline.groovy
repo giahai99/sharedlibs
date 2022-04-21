@@ -24,6 +24,8 @@ def call() {
 
                                 Kubectl kubectl = new Kubectl()
 
+                                kubectl.sayHello()
+
                                 kubectl.createDockerRegistrySecret("giahai99",password,"Haidepzai_kut3@yahoo.com","devops-tools")
 
                                 sh "echo hello 4"
