@@ -1,6 +1,15 @@
 #!/usr/bin/env groovy
 class Kubectl {
 
+    public Kubectl() {
+
+
+            sh "echo hello 2"
+
+
+    }
+
+
     public Kubectl(String key,String serviceAccount,String project, String clusterName, String zone) {
         container('claranet') {
 
