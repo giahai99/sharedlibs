@@ -2,9 +2,9 @@
 
 class Gcloud {
 
-    def authenticate(Map config = [:]) {
-        sh 'set +x; echo ${config.key} > key.json'
-        sh 'gcloud auth activate-service-account ${config.serviceAccount} --key-file=key.json --project=${config.project}'
+    def authenticate(String key, String serviceAccount, String project) {
+        sh 'set +x; echo ${key} > key.json'
+        sh 'gcloud auth activate-service-account ${serviceAccount} --key-file=key.json --project=${project}'
     }
 
     def getClusterCredentials(Map config = [:]) {
