@@ -11,8 +11,8 @@ def authenticate(Map config = [:]) {
     }
 }
 
-def getClusterCredentials(String clusterName, String zone, String project) {
+def getClusterCredentials(Map config = [:]) {
     container('claranet') {
-        sh "gcloud container clusters get-credentials ${clusterName} --zone asia-southeast1-b --project primal-catfish-346210"
+        sh "gcloud container clusters get-credentials $config.clusterName --zone $config.zone --project $config.project"
     }
 }
