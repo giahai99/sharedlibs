@@ -2,7 +2,7 @@
 
 class Gcloud {
     public Gcloud(String key,String serviceAccount,String project, String clusterName, String zone) {
-
+        sh "echo hello 3"
         this.authenticate(key, serviceAccount, project)
         this.getClusterCredentials(clusterName, zone, project)
 
