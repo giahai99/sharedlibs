@@ -4,6 +4,8 @@ def call() {
     PodTemplate podTemplate = new PodTemplate()
     Git git = new Git()
     Kaniko kaniko = new Kaniko()
+    Kubectl kubectl = new Kubectl()
+    Gcloud gcloud = new Gcloud()
 
     pipeline {
         agent {
@@ -18,18 +20,12 @@ def call() {
                         script {
                             withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
                                                                                                                                                      [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+                                gcloud.authenticate(key:key ,serviceAccount: "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com", project: "primal-catfish-346210")
 
-//                                Kubectl kubectl = new Kubectl(key,"truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com","primal-catfish-346210"
-//                                ,"cluster-1","asia-southeast1-b")
+                                gcloud.getClusterCredentials(clusterName: "cluster-1", zone: "asia-southeast1-b", project: "primal-catfish-346210")
 
+                                kubectl.createDockerRegistrySecret(username:"giahai99",password:password,dockerEmail:"Haidepzai_kut3@yahoo.com",nameSpace:"devops-tools")
 
-
-                                Kubectl kubectl = new Kubectl(this)
-
-
-                                kubectl.createDockerRegistrySecret("giahai99",password,"Haidepzai_kut3@yahoo.com","devops-tools")
-
-                                sh "echo hello 4"
                             }
                         }
                 }
@@ -43,9 +39,8 @@ def call() {
                 }
                 steps {
                         script{
-                            sh "echo hello 5"
-                            git.checkOut("main","https://github.com/giahai99/devops-first-prj.git")
-                            kaniko.buildAndPushImage("giahai99/javaapp","${BUILD_NUMBER}")
+                            git.checkOut(branch:"main", url:"https://github.com/giahai99/devops-first-prj.git")
+                            kaniko.buildAndPushImage(dockerImage:"giahai99/javaapp",tag:"${BUILD_NUMBER}")
                     }
                 }
             }
@@ -58,13 +53,13 @@ def call() {
                             withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]
                             , [path: 'kv/github-token', secretValues: [[vaultKey: 'token']]]]) {
                 
-                                git.pull(token, "giahai99", "devops-first-prj.git")
+                                git.pull(token:token, organization:"giahai99", resporitory:"devops-first-prj.git")
                                 
                                 kubectl.createGenericSecret(secretName:"db-user-pass" ,username:username, password:password)
                                 
-                                kubectl.applyFiles("devops-tools",["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"], "devops-first-prj")
+                                kubectl.applyFiles(nameSpace:"devops-tools",fileList:["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"], directory:"devops-first-prj")
 
-                                kubectl.setDeploymentImage("devops-tools","book-deployment","my-book-management","giahai99/javaapp","${BUILD_NUMBER}")
+                                kubectl.setDeploymentImage(nameSpace:"devops-tools",deploymentName:"book-deployment",containerName:"my-book-management",dockerImage:"giahai99/javaapp",tag:"${BUILD_NUMBER}")
 
                         }
                     }
@@ -77,7 +72,7 @@ def call() {
             cleanup {
                     script{
 
-                        kubectl.deleteSecretAfterRun("devops-tools",["db-user-pass","docker-credentials"])
+                        kubectl.deleteSecretAfterRun(nameSpace:"devops-tools",secrets:["db-user-pass","docker-credentials"])
 
                 }
             }

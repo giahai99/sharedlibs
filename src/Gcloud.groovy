@@ -1,20 +1,14 @@
 #!/usr/bin/env groovy
 
 class Gcloud {
-    public Gcloud(String key,String serviceAccount,String project, String clusterName, String zone) {
-        sh "echo hello 3"
-        this.authenticate(key, serviceAccount, project)
-        this.getClusterCredentials(clusterName, zone, project)
 
+    def authenticate(Map config = [:]) {
+        sh 'set +x; echo $config.key > key.json'
+        sh 'gcloud auth activate-service-account $config.serviceAccount --key-file=key.json --project=$config.project'
     }
 
-    def authenticate(String key, String serviceAccount,String project) {
-        sh 'set +x; echo ${key} > key.json'
-        sh 'gcloud auth activate-service-account $serviceAccount --key-file=key.json --project=$project'
-    }
-
-    def getClusterCredentials(String clusterName,String zone, String project) {
-        sh 'gcloud container clusters get-credentials $clusterName --zone $zone --project $project'
+    def getClusterCredentials(Map config = [:]) {
+        sh 'gcloud container clusters get-credentials $config.clusterName --zone $config.zone --project $config.project'
     }
 
 }

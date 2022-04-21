@@ -1,42 +1,19 @@
 #!/usr/bin/env groovy
 class Kubectl {
 
-    Kubectl(context) {
-
-        context.sh "echo hello 2"
-
-    }
-
-    def sayHello() {
-
-
-        sh "echo hello 2"
-
-
-    }
-
-    Kubectl(String key,String serviceAccount,String project, String clusterName, String zone) {
+    def applyFiles(Map config= [:]) {
         container('claranet') {
+            for (file in config.fileList) {
 
-            sh "echo hello 2"
-            Gcloud gcloud = new Gcloud(key,serviceAccount,project,clusterName,zone)
-
-        }
-    }
-
-    def applyFiles(String nameSpace="default" ,def files,String directory) {
-        container('claranet') {
-            for (file in files) {
-
-                sh "cd ./$directory && kubectl --namespace=$nameSpace apply -f ${file}"
+                sh "cd ./$config.directory && kubectl --namespace=$config.nameSpace apply -f ${file}"
 
             }
         }
     }
 
-    def createDockerRegistrySecret(String username,String password, String dockerEmail, String nameSpace="default") {
+    def createDockerRegistrySecret(Map config = [:]) {
         container('claranet') {
-            sh 'kubectl create secret docker-registry docker-credentials --docker-username=$username --docker-password=${password} --docker-email=$dockerEmail  --namespace=$nameSpace'
+            sh 'kubectl create secret docker-registry docker-credentials --docker-username=$config.username --docker-password=$config.password --docker-email=$config.dockerEmail  --namespace=$config.nameSpace'
         }
     }
 
@@ -46,17 +23,17 @@ class Kubectl {
         }
     }
 
-    def setDeploymentImage(String nameSpace="default", String deploymentName, String containerName, String dockerImage, String tag) {
+    def setDeploymentImage(Map config = [:]) {
         container('claranet') {
-            sh 'kubectl --namespace=$nameSpace set image deployment/$deploymentName $containerName=$dockerImage:$tag'
+            sh 'kubectl --namespace=$config.nameSpace set image deployment/$config.deploymentName $config.containerName=$config.dockerImage:$config.tag'
         }
     }
 
-    def deleteSecretAfterRun(String nameSpace="default", def secrets) {
+    def deleteSecretAfterRun(Map config = [:]) {
         container('claranet') {
-            for (secret in secrets) {
+            for (secret in config.secrets) {
 
-                sh 'kubectl --namespace=$nameSpace delete secret $secret --ignore-not-found=true'
+                sh 'kubectl --namespace=$config.nameSpace delete secret $secret --ignore-not-found=true'
 
             }
         }
