@@ -2,7 +2,6 @@
 
 def call() {
     PodTemplate podTemplate = new PodTemplate()
-    Kubectl kubectl = null
     Git git = new Git()
     Kaniko kaniko = new Kaniko()
 
@@ -21,7 +20,7 @@ def call() {
                                                                                                                                                      [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
                                 sh "echo hello 1"
 
-                                kubectl = new Kubectl(key,"truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com","primal-catfish-346210"
+                                Kubectl kubectl = new Kubectl(key,"truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com","primal-catfish-346210"
                                 ,"cluster-1","asia-southeast1-b")
 
                                 kubectl.createDockerRegistrySecret("giahai99",password,"Haidepzai_kut3@yahoo.com","devops-tools")
