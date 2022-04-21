@@ -58,7 +58,7 @@ def call() {
                                 
                                 kubectl.createGenericSecret(secretName:"db-user-pass" ,username:username, password:password)
 
-                                kubectl.applyFiles(nameSpace:"devops-tools",fileList:["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"], diretory:"devops-first-prj")
+                                kubectl.applyFiles(nameSpace:"devops-tools",fileList:["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"], directory:"devops-first-prj")
 
                                 kubectl.setDeploymentImage(nameSpace:"devops-tools",deploymentName:"book-deployment",containerName:"my-book-management",dockerImage:"giahai99/javaapp",tag:"${BUILD_NUMBER}")
 

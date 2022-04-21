@@ -4,8 +4,13 @@ def applyFiles(Map config = [:]) {
     container('claranet') {
         for (file in config.fileList) {
 
-            sh "cd ./$config.directory && kubectl --namespace=$config.nameSpace apply -f $config.file"
 
+
+//            devops-first-prj
+
+            sh "cd $config.directory && kubectl --namespace=$config.nameSpace apply -f $config.file"
+
+//            sh "cd devops-first-prj && kubectl --namespace=$config.nameSpace apply -f $config.file"
         }
     }
 }
