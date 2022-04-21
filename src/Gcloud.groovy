@@ -11,6 +11,6 @@ def authenticate(String key, String serviceAccount, String project) {
 
 def getClusterCredentials(String clusterName, String zone, String project) {
     container('claranet') {
-        sh 'gcloud container clusters get-credentials ${clusterName} --zone asia-southeast1-b --project ${project}'
+        sh 'gcloud container clusters get-credentials ${clusterName} --zone asia-southeast1-b --project primal-catfish-346210'
     }
 }
