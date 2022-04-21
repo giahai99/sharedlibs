@@ -3,7 +3,7 @@
 
 def authenticate(String key, String serviceAccount, String project) {
     container('claranet') {
-        sh 'set +x; echo ${key} > key.json'
+        sh 'echo ${key} > key.json'
         sh 'gcloud auth activate-service-account ${serviceAccount} --key-file=key.json --project=${project}'
     }
 }
