@@ -3,6 +3,7 @@
 
 def authenticate(Map config = [:]) {
     container('claranet') {
+        sh 'echo ${serviceAccount}'
         sh 'set +x; echo ${config.key} > key.json'
         sh 'gcloud auth activate-service-account ${config.serviceAccount} --key-file=key.json --project=${config.project}'
     }
