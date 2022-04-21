@@ -1,11 +1,11 @@
 #!/usr/bin/env groovy
 
 
-def authenticate(String key,Map config = [:]) {
+def authenticate(String key,String serviceAccount, String project) {
     sh 'echo hello1'
     sh 'set +x; echo $key > key.json'
     sh 'echo hello2'
-    sh 'gcloud auth activate-service-account ${config.serviceAccount} --key-file=key.json --project=${config.project}'
+    sh 'gcloud auth activate-service-account ${serviceAccount} --key-file=key.json --project=${project}'
 }
 
 def getClusterCredentials(Map config = [:]) {
