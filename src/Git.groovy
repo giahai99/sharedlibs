@@ -1,14 +1,13 @@
-def pull(Map config = [:]) {
+def pull(String token, String organization, String resporitory) {
     container('claranet') {
 
-        sh 'git clone https://$config.token@github.com/$config.organization/$config.resporitory'
+        sh 'git clone https://$token@github.com/$organization/$resporitory'
 
     }
 }
 
-
-def checkOut(Map map=[:]) {
+def checkOut(String branch, String url) {
     container(name: 'kaniko', shell: '/busybox/sh') {
-        checkout([$class: 'GitSCM', branches: [[name: '*/$config.branch']], extensions: [], userRemoteConfigs: [[url: $config.url]]])
+        checkout([$class: 'GitSCM', branches: [[name: '*/$branch']], extensions: [], userRemoteConfigs: [[url: $url]]])
     }
 }
