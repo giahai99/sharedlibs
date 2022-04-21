@@ -2,7 +2,7 @@
 
 def call() {
     PodTemplate podTemplate = new PodTemplate()
-    Kubectl kubectl
+    Kubectl kubectl = null
     Git git = new Git()
     Kaniko kaniko = new Kaniko()
 
