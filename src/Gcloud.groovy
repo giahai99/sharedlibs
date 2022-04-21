@@ -1,6 +1,5 @@
 #!/usr/bin/env groovy
 
-
 def authenticate(Map config = [:]) {
     container('claranet') {
         String key = config.key
