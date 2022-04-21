@@ -2,15 +2,15 @@
 
 
 
-class Kubectl {
-
-    Kubectl() {
-
-
-            sh "echo hello 2"
-
-
-    }
+//class Kubectl {
+//
+//    Kubectl() {
+//
+//
+//            sh "echo hello 2"
+//
+//
+//    }
     def sayHello() {
 
 
@@ -65,4 +65,4 @@ class Kubectl {
             }
         }
     }
-}
+//}
