@@ -1,16 +1,11 @@
 #!/usr/bin/env groovy
+class Kubectl {
 
+    Kubectl() {
 
+            println 'hello 2'
 
-//class Kubectl {
-//
-//    Kubectl() {
-//
-//
-//            sh "echo hello 2"
-//
-//
-//    }
+    }
     def sayHello() {
 
 
