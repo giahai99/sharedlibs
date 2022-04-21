@@ -1,9 +1,9 @@
 #!/usr/bin/env groovy
 class Kubectl {
 
-    Kubectl(context) {
+    Kubectl() {
 
-        context.println("echo hello 2")
+        println("echo hello 2")
 
     }
     def sayHello() {
