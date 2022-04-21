@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 
-def authenticate(String key, def serviceAccount, String project) {
+def authenticate(String key, String serviceAccount, String project) {
     container('claranet') {
         sh "set +x ;echo ${key} > key.json"
         sh "gcloud auth activate-service-account ${serviceAccount} --key-file=key.json --project=$project"
