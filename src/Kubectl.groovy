@@ -3,7 +3,7 @@ class Kubectl {
 
     Kubectl() {
 
-            println 'hello 2'
+            this.sayHello()
 
     }
     def sayHello() {
