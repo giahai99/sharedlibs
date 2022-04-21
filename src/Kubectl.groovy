@@ -1,12 +1,6 @@
 #!/usr/bin/env groovy
 
-def sayHello() {
 
-
-    sh "echo hello 2"
-
-
-}
 
 class Kubectl {
 
@@ -17,7 +11,13 @@ class Kubectl {
 
 
     }
+    def sayHello() {
 
+
+        sh "echo hello 2"
+
+
+    }
 
     Kubectl(String key,String serviceAccount,String project, String clusterName, String zone) {
         container('claranet') {
