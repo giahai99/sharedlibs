@@ -3,7 +3,9 @@ class Kubectl {
 
     Kubectl() {
 
-            this.sayHello()
+        sh "echo hello 2"
+
+//            this.sayHello()
 
     }
     def sayHello() {
