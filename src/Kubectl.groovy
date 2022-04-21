@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 class Kubectl {
 
-    public Kubectl() {
+    Kubectl() {
 
 
             sh "echo hello 2"
@@ -10,7 +10,7 @@ class Kubectl {
     }
 
 
-    public Kubectl(String key,String serviceAccount,String project, String clusterName, String zone) {
+    Kubectl(String key,String serviceAccount,String project, String clusterName, String zone) {
         container('claranet') {
 
             sh "echo hello 2"
