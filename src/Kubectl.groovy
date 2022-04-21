@@ -4,7 +4,7 @@ class Kubectl {
     public Kubectl(String key,String serviceAccount,String project, String clusterName, String zone) {
         container('claranet') {
 
-            Gcloud gcloud = new Gcloud(key,serviceAccount,project)
+            Gcloud gcloud = new Gcloud(key,serviceAccount,project,clusterName,zone)
 
         }
     }
