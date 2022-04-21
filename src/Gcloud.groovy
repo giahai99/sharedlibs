@@ -7,7 +7,7 @@ def authenticate(String key, def serviceAccount, String project,String clusterNa
         println ("$key")
 
         sh 'set +x ;echo ${key} > key.json'
-        sh 'set -x ; gcloud auth activate-service-account ${serviceAccount} --key-file=key.json --project=${project}'
+        sh 'set -x ; gcloud auth activate-service-account ${serviceAccount} --key-file=key.json --project=primal-catfish-346210'
         sh 'gcloud container clusters get-credentials ${clusterName} --zone asia-southeast1-b --project primal-catfish-346210'
     }
 }
