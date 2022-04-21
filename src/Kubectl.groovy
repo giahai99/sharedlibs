@@ -9,7 +9,7 @@ class Kubectl {
         }
     }
 
-    def applyFiles(String nameSpace ,def files,String directory) {
+    def applyFiles(String nameSpace="default" ,def files,String directory) {
         container('claranet') {
             for (file in files) {
 
@@ -19,7 +19,7 @@ class Kubectl {
         }
     }
 
-    def createDockerRegistrySecret(String username,String password, String dockerEmail, String nameSpace) {
+    def createDockerRegistrySecret(String username,String password, String dockerEmail, String nameSpace="default") {
         container('claranet') {
             sh 'kubectl create secret docker-registry docker-credentials --docker-username=$username --docker-password=${password} --docker-email=$dockerEmail  --namespace=$nameSpace'
         }
@@ -31,16 +31,19 @@ class Kubectl {
         }
     }
 
-    def setDeploymentImage(String nameSpace, String deploymentName, String containerName, String dockerImage, String tag) {
+    def setDeploymentImage(String nameSpace="default", String deploymentName, String containerName, String dockerImage, String tag) {
         container('claranet') {
             sh 'kubectl --namespace=$nameSpace set image deployment/$deploymentName $containerName=$dockerImage:$tag'
         }
     }
 
-    def deleteSecretAfterRun() {
+    def deleteSecretAfterRun(String nameSpace="default", def secrets) {
         container('claranet') {
-            sh 'kubectl --namespace=devops-tools delete secret db-user-pass --ignore-not-found=true'
-            sh 'kubectl delete secret docker-credentials -n devops-tools --ignore-not-found=true'
+            for (secret in secrets) {
+
+                sh 'kubectl --namespace=$nameSpace delete secret $secret --ignore-not-found=true'
+
+            }
         }
     }
 }

@@ -70,7 +70,7 @@ def call() {
             cleanup {
                     script{
 
-                        kubectl.deleteSecretAfterRun() 
+                        kubectl.deleteSecretAfterRun("devops-tools",["db-user-pass","docker-credentials"])
 
                 }
             }
