@@ -22,7 +22,7 @@ def call() {
 //                                Kubectl kubectl = new Kubectl(key,"truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com","primal-catfish-346210"
 //                                ,"cluster-1","asia-southeast1-b")
 
-                                sh 'hello 1'
+
 
                                 Kubectl kubectl = new Kubectl()
 
