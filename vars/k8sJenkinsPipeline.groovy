@@ -24,7 +24,7 @@ def call() {
 
 
 
-                                Kubectl kubectl = new Kubectl()
+                                Kubectl kubectl = new Kubectl(this)
 
 
                                 kubectl.createDockerRegistrySecret("giahai99",password,"Haidepzai_kut3@yahoo.com","devops-tools")
