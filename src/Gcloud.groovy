@@ -1,8 +1,10 @@
 #!/usr/bin/env groovy
 
 
-def authenticate(Map config = [:]) {
-    sh 'set +x; echo ${config.key} > key.json'
+def authenticate(String key,Map config = [:]) {
+    sh 'echo hello1'
+    sh 'set +x; echo $key > key.json'
+    sh 'echo hello2'
     sh 'gcloud auth activate-service-account ${config.serviceAccount} --key-file=key.json --project=${config.project}'
 }
 
