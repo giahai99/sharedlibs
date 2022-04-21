@@ -1,11 +1,12 @@
 #!/usr/bin/env groovy
 class Kubectl {
 
-    Kubectl() {
+    Kubectl(context) {
 
-        println("echo hello 2")
+        context.sh "echo hello 2"
 
     }
+
     def sayHello() {
 
 
