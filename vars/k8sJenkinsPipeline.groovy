@@ -68,7 +68,4 @@ def call() {
         stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"])
 
     }
-
-
-    }
 }
