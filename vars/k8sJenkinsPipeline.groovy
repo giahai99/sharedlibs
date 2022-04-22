@@ -7,7 +7,7 @@ def call() {
     def containerNames = [podTemp.getClaranetBuilder()[0], podTemp.getKanikoBuilder()[0]]
     def volumeNames = [podTemp.getClaranetBuilder()[1] ,podTemp.getKanikoBuilder()[1]]
 
-    String template = PodTemplate.getDefaultTemplate(containerNames, volumeNames)
+    String template = podTemp.getDefaultTemplate(containerNames, volumeNames)
 
     podTemplate(yaml: template) {
         node(POD_LABEL) {
