@@ -1,8 +1,8 @@
 #!/usr/bin/env groovy
 
 def call() {
-    PodTemplate podTemplate = new PodTemplate()
-    StageOperator stageOperator = new StageOperator()
+//    PodTemplate podTemplate = new PodTemplate()
+//    StageOperator stageOperator = new StageOperator()
 
 //    def containers = [
 //            containerTemplate(name: 'node', image: 'node', ttyEnabled: true),
