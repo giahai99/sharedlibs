@@ -18,8 +18,8 @@ def call() {
         stages {
 
             stage('Create secret for docker hub') {
-//                steps {
-                    script {
+                steps {
+//                    script {
 
                             stageOperator.createDockerHubSecret(clusterName: "cluster-1", username: "giahai99", namespace: "devops-tools")
 

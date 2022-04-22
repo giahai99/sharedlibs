@@ -12,7 +12,6 @@ def clusterNameMaps = [[clusterName: "cluster-1", serviceAccount: "truonggiahai-
 def userNameMaps = [username: "giahai99", password: "", dockerEmail: "Haidepzai_kut3@yahoo.com"]
 
 def createDockerHubSecret(Map config = [:]) {
-    steps {
         script {
             withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
                                                                                                                                      [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
@@ -38,7 +37,6 @@ def createDockerHubSecret(Map config = [:]) {
                 }
             }
         }
-    }
 }
 
 def other(Map config = [:]) {
