@@ -16,9 +16,17 @@ def call() {
         }
 
         stages {
-            script {
-                stageOperator.createDockerHubSecret(clusterName: "cluster-1", username: "giahai99", namespace: "devops-tools")
+
+            stage('Create secret for docker hub') {
+//                steps {
+                    script {
+
+                            stageOperator.createDockerHubSecret(clusterName: "cluster-1", username: "giahai99", namespace: "devops-tools")
+
+//                    }
+                }
             }
+
             stage('Checkout and Build With Kaniko') {
                 agent { 
                 kubernetes {
