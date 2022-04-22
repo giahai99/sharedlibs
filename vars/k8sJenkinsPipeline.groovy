@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-
+PodTemplate podTemplate = new PodTemplate()
 def call() {
 
 //    PodTemplate podTemplate = new PodTemplate()
@@ -18,7 +18,7 @@ def call() {
 //    def label = "job-${name}-${UUID.randomUUID().toString()}".take(15)
 //    def tag = "${UUID.randomUUID().toString()}".take(5)
 //    def imageName = "${registryRepository}:${tag}"
-    PodTemplate podTemplate = new PodTemplate()
+
     podTemplate(yaml: """
 kind: Pod
 spec:
