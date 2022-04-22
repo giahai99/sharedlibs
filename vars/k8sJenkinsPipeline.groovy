@@ -5,15 +5,15 @@ def call() {
     StageOperator stageOperator = new StageOperator()
 
     node {
-        agent {
-            kubernetes {
-                yaml podTemplate.addClaranetBuilder()
-            }
-        }
+
 
 
         stage('Create secret for docker hub') {
-
+            agent {
+                kubernetes {
+                    yaml podTemplate.addClaranetBuilder()
+                }
+            }
 
                     withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
                                                                                                                                              [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
@@ -41,7 +41,11 @@ def call() {
 
     // Running Docker container, make sure port 8080 is opened in
         stage('Deploy App to Kubernetes') {
-
+            agent {
+                kubernetes {
+                    yaml podTemplate.getDefaultTemplate()
+                }
+            }
 
                         withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]
                                                                                                                                                  , [path: 'kv/github-token', secretValues: [[vaultKey: 'token']]]]) {
