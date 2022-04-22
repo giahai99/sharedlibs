@@ -22,7 +22,7 @@ String claranet = podTemplate1.addClaranetBuilder()
 //    def tag = "${UUID.randomUUID().toString()}".take(5)
 //    def imageName = "${registryRepository}:${tag}"
 
-    podTemplate(yaml: claranet) {
+    podTemplate(claranet) {
         node(POD_LABEL) {
 //            PodTemplate podTemplate = new PodTemplate()
             StageOperator stageOperator = new StageOperator()
