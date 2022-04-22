@@ -1,14 +1,14 @@
 #!/usr/bin/env groovy
 
-//def call() {
+def call() {
     PodTemplate podTemplate = new PodTemplate()
     StageOperator stageOperator = new StageOperator()
 
-    podTemplate {
-        kubernetes {
-            yaml podTemplate.addKanikoBuilder()
-        }
+    kubernetes {
+        yaml podTemplate.addKanikoBuilder()
+    }
 
+    podTemplate {
         node(POD_LABEL) {
             stage('Create secret for docker hub') {
 
@@ -93,4 +93,4 @@
 //            }
 //        }
 //    }
-//}
+}
