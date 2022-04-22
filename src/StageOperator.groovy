@@ -1,13 +1,6 @@
 #!/usr/bin/env groovy
 
-
-
 //    PodTemplate podTemplate = new PodTemplate()
-//    Git git = new Git()
-//    Kaniko kaniko = new Kaniko()
-
-
-
 
     def createDockerHubSecret(Map config = [:]) {
         Kubectl kubectl = new Kubectl()
@@ -16,7 +9,7 @@
         def clusterNameMaps = [ [ clusterName : "cluster-1", serviceAccount :
                 "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
                                   project : "primal-catfish-346210", key : "", zone : "asia-southeast1-b" ] ]
-        def userNameMaps = [ username : "giahai99", password : "", dockerEmail : "Haidepzai_kut3@yahoo.com" ]
+        def userNameMaps = [ [ username : "giahai99", password : "", dockerEmail : "Haidepzai_kut3@yahoo.com" ] ]
 
 
         withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
@@ -45,12 +38,14 @@
     }
 
     def checkoutBuildAndPushImage(Map config = [:]) {
-        script {
+        Git git = new Git()
+        Kaniko kaniko = new Kaniko()
             git.checkOut(branch: "main", url: "https://github.com/giahai99/devops-first-prj.git")
             kaniko.buildAndPushImage(dockerImage: "giahai99/javaapp", tag: BUILD_NUMBER)
         }
 
 
+    def other(Map config = [:]) {
         // Running Docker container, make sure port 8080 is opened in
         stage('Deploy App to Kubernetes') {
             steps {
