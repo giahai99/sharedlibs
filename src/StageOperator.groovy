@@ -39,9 +39,8 @@ def checkoutBuildAndPushImage(Map config = [:]) {
 
 
 def deployAppToKubernetes(Map config = [:]) {
-    Git git = new Git()
-    Kubectl kubectl = new Kubectl()
-
+        Git git = new Git()
+        Kubectl kubectl = new Kubectl()
 
         def organizationMap = [ [ token : "", organization: "giahai99" ] ]
 
