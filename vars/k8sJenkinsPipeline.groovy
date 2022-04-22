@@ -24,7 +24,6 @@ def call() {
             }
         }
 
-
     podTemplate(yaml: podTemp.getDefaultTemplate()) {
         node(POD_LABEL) {
             stage('Create secret for docker hub') {
