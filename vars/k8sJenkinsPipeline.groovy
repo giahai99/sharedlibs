@@ -1,12 +1,12 @@
 #!/usr/bin/env groovy
 
-//class k8sJenkinsPipeline {
+class k8sJenkinsPipeline {
 
 //PodTemplate podTemplate1 = new PodTemplate()
 def call() {
 //String claranet = podTemplate1.addClaranetBuilder()
 
-    podTemplate("""
+    podTemplate(yaml: """
 kind: Pod
 spec:
   containers:
@@ -50,7 +50,7 @@ spec:
             }
         }
     }
-//}
+}
 //    podTemplate(yaml: podTemplate.addKanikoBuilder()) {
 ////        kubernetes {
 //
