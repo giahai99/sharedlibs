@@ -70,3 +70,13 @@ def deployAppToKubernetes(Map config = [:]) {
             }
         }
 }
+
+def deleteSecretAfterRun(Map config = [:]) {
+
+    Kubectl kubectl = new Kubectl()
+
+    kubectl.deleteSecretAfterRun(namespace: config.namespace, secrets: config.secrets)
+}
+
+
+

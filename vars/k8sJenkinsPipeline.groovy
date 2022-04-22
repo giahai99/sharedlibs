@@ -69,7 +69,9 @@ def call() {
         post { 
             cleanup {
                     script{
-                        kubectl.deleteSecretAfterRun(nameSpace:"devops-tools", secrets:["db-user-pass","docker-credentials"])
+
+                        stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass","docker-credentials"])
+
                 }
             }
         }
