@@ -4,8 +4,8 @@ def call() {
     PodTemplate podTemp = new PodTemplate()
     StageOperator stageOperator = new StageOperator()
 
-    def containerNames = [podTemplate.getClaranetBuilder()[0], podTemplate.getKanikoBuilder()[0]]
-    def volumeNames = [podTemplate.getClaranetBuilder()[1] ,podTemplate.getKanikoBuilder()[1]]
+    def containerNames = [podTemp.getClaranetBuilder()[0], podTemp.getKanikoBuilder()[0]]
+    def volumeNames = [podTemp.getClaranetBuilder()[1] ,podTemp.getKanikoBuilder()[1]]
 
 
 
