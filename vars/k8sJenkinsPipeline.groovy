@@ -7,9 +7,9 @@ def call() {
     def containerNames = [podTemp.getClaranetBuilder()[0], podTemp.getKanikoBuilder()[0]]
     def volumeNames = [podTemp.getClaranetBuilder()[1] ,podTemp.getKanikoBuilder()[1]]
 
+    String template = PodTemplate.getDefaultTemplate(containerNames, volumeNames)
 
-
-    podTemplate(yaml: PodTemplate.getDefaultTemplate(containerNames, volumeNames)) {
+    podTemplate(yaml: template) {
         node(POD_LABEL) {
             stage('Create secret for docker hub') {
                 withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
