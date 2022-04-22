@@ -7,9 +7,9 @@ Kaniko kaniko = new Kaniko()
 Kubectl kubectl = new Kubectl()
 Gcloud gcloud = new Gcloud()
 
-def clusterNameMaps = [[clusterName: "cluster-1", serviceAccount: "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
+clusterNameMaps = [[clusterName: "cluster-1", serviceAccount: "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
                       project: "primal-catfish-346210", key: "", zone: "asia-southeast1-b"]]
-def userNameMaps = [username: "giahai99", password: "", dockerEmail: "Haidepzai_kut3@yahoo.com"]
+userNameMaps = [username: "giahai99", password: "", dockerEmail: "Haidepzai_kut3@yahoo.com"]
 
 def createDockerHubSecret(Map config = [:]) {
 
