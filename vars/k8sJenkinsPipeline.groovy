@@ -4,7 +4,7 @@ class k8sJenkinsPipeline {
 
 PodTemplate podTemplate1 = new PodTemplate()
 def call() {
-String claranet = podTemplate1.getClaranetemplate()
+String claranet = podTemplate1.addClaranetBuilder()
 //    PodTemplate podTemplate = new PodTemplate()
 //    StageOperator stageOperator = new StageOperator()
 
@@ -22,7 +22,17 @@ String claranet = podTemplate1.getClaranetemplate()
 //    def tag = "${UUID.randomUUID().toString()}".take(5)
 //    def imageName = "${registryRepository}:${tag}"
 
-    podTemplate(yaml: """$claranet""") {
+    podTemplate(yaml: """
+kind: Pod
+spec:
+  containers:
+  - name: claranet
+    image: claranet/gcloud-kubectl-docker:latest
+    imagePullPolicy: Always
+    command:
+    - cat
+    tty: true
+""") {
         node(POD_LABEL) {
 //            PodTemplate podTemplate = new PodTemplate()
             StageOperator stageOperator = new StageOperator()
