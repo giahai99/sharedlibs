@@ -39,13 +39,17 @@ def checkoutBuildAndPushImage(Map config = [:]) {
 
 
 def deployAppToKubernetes(Map config = [:]) {
+    withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
+                                                                                                                             [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+
+
         Git git = new Git()
         Kubectl kubectl = new Kubectl()
 
-        def organizationMap = [ [ token : "", organization: "giahai99" ] ]
+        def organizationMap = [[token: "", organization: "giahai99"]]
 
-        def respositoryMap = [ [organization: "giahai99", resporitory: "devops-first-prj.git", filesDeployment: ["my-app-service.yml", "mysql-config.yml", "my-app-deployment.yml"],
-                               deploymentName: "book-deployment", containerName: "my-book-management", dockerImage: "giahai99/javaapp"] ]
+        def respositoryMap = [[organization  : "giahai99", resporitory: "devops-first-prj.git", filesDeployment: ["my-app-service.yml", "mysql-config.yml", "my-app-deployment.yml"],
+                               deploymentName: "book-deployment", containerName: "my-book-management", dockerImage: "giahai99/javaapp"]]
 
         for (int i = 0; i < organizationMap.size(); i++) {
             if (config.organization == organizationMap[i].organization) {
@@ -55,10 +59,16 @@ def deployAppToKubernetes(Map config = [:]) {
             }
         }
 
+        sh 'echo $key > key.json'
+        sh 'cat key.json'
+        sh 'gcloud auth activate-service-account truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com --key-file=key.json --project=primal-catfish-346210'
+        sh 'gcloud container clusters get-credentials cluster-1 --zone asia-southeast1-b --project primal-catfish-346210'
+
         kubectl.createK8sSecret(secretName: config.secretName, secrets: config.secrets, namespace: config.namespace)
 
         for (int i = 0; i < respositoryMap.size(); i++) {
             if (config.resporitory == respositoryMap[i].resporitory && config.organization == respositoryMap[i].organization) {
+
 
                 String directory = config.resporitory.minus(".git")
 
@@ -68,6 +78,7 @@ def deployAppToKubernetes(Map config = [:]) {
 
             }
         }
+    }
 }
 
 def deleteSecretAfterRun(Map config = [:]) {

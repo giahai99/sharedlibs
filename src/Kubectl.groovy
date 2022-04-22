@@ -17,12 +17,13 @@ def createDockerRegistrySecret(Map config = [:]) {
 }
 
 def createK8sSecret(Map config = [:]) {
-    def cmd = "kubectl --namespace=$config.namespace create secret ${config.secretName}"
-    config.secrets.each { k, v ->
-        cmd += "--from-literak=${k}=${v}"
+    container('claranet') {
+        def cmd = "kubectl --namespace=$config.namespace create secret ${config.secretName}"
+        config.secrets.each { k, v ->
+            cmd += "--from-literak=${k}=${v}"
+        }
     }
 }
-
 
 //def createGenericSecret(Map config = [:]) {
 //    container('claranet') {
@@ -48,4 +49,22 @@ def deleteSecretAfterRun(Map config = [:]) {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
