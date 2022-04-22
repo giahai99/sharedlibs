@@ -1,7 +1,6 @@
 
 def getDefaultTemplate(def addContainers=[""],def addVolumes=[""]) {
-    String containerName = """
-kind: Pod
+    String containerName = """kind: Pod
 spec:
   containers:
   - name: jnlp

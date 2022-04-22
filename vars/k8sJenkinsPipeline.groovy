@@ -78,28 +78,18 @@ spec:
             stage('Create secret for docker hub') {
                 withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
                                                                                                                                          [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
-                    stageOperator.createDockerHubSecret(serviceAccountKey: key, clusterName: "cluster-1", username: "giahai99", password: password, namespace: "devops-tools")
+                    stageOperator.deployAppToKubernetes(organization: "giahai99", resporitory: "devops-first-prj.git", secretName: "db-user-pass",
+                            secrets: [username: username, password: password], namespace: "devops-tools")
                 }
             }
-        }
-    }
 
-        podTemplate(yaml: """
-kind: Pod
-spec:
-  containers:
-  - name: jnlp
-    image: 'jenkins/inbound-agent:4.7-1'
-  - name: claranet
-    image: claranet/gcloud-kubectl-docker:latest
-    imagePullPolicy: Always
-    command:
-    - cat
-    tty: true""") {
-            node() {
             stage('Clean up after run') {
                 stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"])
             }
+
         }
     }
+
+
+
 }
