@@ -2,9 +2,9 @@
 
 class k8sJenkinsPipeline {
 
-PodTemplate podTemplate1 = new PodTemplate()
+//PodTemplate podTemplate1 = new PodTemplate()
 def call() {
-String claranet = podTemplate1.addClaranetBuilder()
+//String claranet = podTemplate1.addClaranetBuilder()
 //    PodTemplate podTemplate = new PodTemplate()
 //    StageOperator stageOperator = new StageOperator()
 
