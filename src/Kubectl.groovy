@@ -4,7 +4,7 @@ def applyFiles(Map config = [:]) {
     container('claranet') {
         for (file in config.fileList) {
 
-            sh "cd $config.directory && kubectl --namespace=$config.nameSpace apply -f $file"
+            sh "cd $config.directory && kubectl --namespace=$config.namespace apply -f $file"
 
         }
     }
@@ -35,7 +35,7 @@ def createK8sSecret(Map config = [:]) {
 
 def setDeploymentImage(Map config = [:]) {
     container('claranet') {
-        sh "kubectl --namespace=$config.nameSpace set image deployment/$config.deploymentName $config.containerName=$config.dockerImage:$config.tag"
+        sh "kubectl --namespace=$config.namespace set image deployment/$config.deploymentName $config.containerName=$config.dockerImage:$config.tag"
     }
 }
 
@@ -43,7 +43,7 @@ def deleteSecretAfterRun(Map config = [:]) {
     container('claranet') {
         for (secret in config.secrets) {
 
-            sh "kubectl --namespace=$config.nameSpace delete secret $secret --ignore-not-found=true"
+            sh "kubectl --namespace=$config.namespace delete secret $secret --ignore-not-found=true"
 
         }
     }
