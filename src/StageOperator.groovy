@@ -39,43 +39,45 @@ def checkoutBuildAndPushImage(Map config = [:]) {
 
 
 def deployAppToKubernetes(Map config = [:]) {
-    withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
-                                                                                                                             [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+    container("claranet") {
+        withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
+                                                                                                                                 [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
 
 
-        Git git = new Git()
-        Kubectl kubectl = new Kubectl()
+            Git git = new Git()
+            Kubectl kubectl = new Kubectl()
 
-        def organizationMap = [[token: "", organization: "giahai99"]]
+            def organizationMap = [[token: "", organization: "giahai99"]]
 
-        def respositoryMap = [[organization  : "giahai99", resporitory: "devops-first-prj.git", filesDeployment: ["my-app-service.yml", "mysql-config.yml", "my-app-deployment.yml"],
-                               deploymentName: "book-deployment", containerName: "my-book-management", dockerImage: "giahai99/javaapp"]]
+            def respositoryMap = [[organization  : "giahai99", resporitory: "devops-first-prj.git", filesDeployment: ["my-app-service.yml", "mysql-config.yml", "my-app-deployment.yml"],
+                                   deploymentName: "book-deployment", containerName: "my-book-management", dockerImage: "giahai99/javaapp"]]
 
-        for (int i = 0; i < organizationMap.size(); i++) {
-            if (config.organization == organizationMap[i].organization) {
-                organizationMap[i].token = token
+            for (int i = 0; i < organizationMap.size(); i++) {
+                if (config.organization == organizationMap[i].organization) {
+                    organizationMap[i].token = token
 
-                git.pull(token: organizationMap[i].token, organization: organizationMap[i].organization, resporitory: config.resporitory)
+                    git.pull(token: organizationMap[i].token, organization: organizationMap[i].organization, resporitory: config.resporitory)
+                }
             }
-        }
 
-        sh 'echo $key > key.json'
-        sh 'cat key.json'
-        sh 'gcloud auth activate-service-account truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com --key-file=key.json --project=primal-catfish-346210'
-        sh 'gcloud container clusters get-credentials cluster-1 --zone asia-southeast1-b --project primal-catfish-346210'
+            sh 'echo $key > key.json'
+            sh 'cat key.json'
+            sh 'gcloud auth activate-service-account truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com --key-file=key.json --project=primal-catfish-346210'
+            sh 'gcloud container clusters get-credentials cluster-1 --zone asia-southeast1-b --project primal-catfish-346210'
 
-        kubectl.createK8sSecret(secretName: config.secretName, secrets: config.secrets, namespace: config.namespace)
+            kubectl.createK8sSecret(secretName: config.secretName, secrets: config.secrets, namespace: config.namespace)
 
-        for (int i = 0; i < respositoryMap.size(); i++) {
-            if (config.resporitory == respositoryMap[i].resporitory && config.organization == respositoryMap[i].organization) {
+            for (int i = 0; i < respositoryMap.size(); i++) {
+                if (config.resporitory == respositoryMap[i].resporitory && config.organization == respositoryMap[i].organization) {
 
 
-                String directory = config.resporitory.minus(".git")
+                    String directory = config.resporitory.minus(".git")
 
-                kubectl.applyFiles(namespace: config.namespace, filesDeployment: respositoryMap[i].filesDeployment, directory: directory)
+                    kubectl.applyFiles(namespace: config.namespace, filesDeployment: respositoryMap[i].filesDeployment, directory: directory)
 
-                kubectl.setDeploymentImage(namespace: config.namespace, deploymentName: respositoryMap[i].deploymentName, containerName: respositoryMap[i].containerName, dockerImage: respositoryMap[i].dockerImage, tag: BUILD_NUMBER)
+                    kubectl.setDeploymentImage(namespace: config.namespace, deploymentName: respositoryMap[i].deploymentName, containerName: respositoryMap[i].containerName, dockerImage: respositoryMap[i].dockerImage, tag: BUILD_NUMBER)
 
+                }
             }
         }
     }
