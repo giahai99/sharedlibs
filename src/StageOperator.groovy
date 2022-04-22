@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-class StageOperator {
+
 
     PodTemplate podTemplate = new PodTemplate()
     Git git = new Git()
@@ -8,12 +8,14 @@ class StageOperator {
     Kubectl kubectl = new Kubectl()
     Gcloud gcloud = new Gcloud()
 
-    def clusterNameMaps = [ [ clusterName : "cluster-1", serviceAccount :
-    "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
-    project : "primal-catfish-346210", key : "", zone : "asia-southeast1-b" ] ]
-    def userNameMaps = [ username : "giahai99", password : "", dockerEmail : "Haidepzai_kut3@yahoo.com" ]
+
 
     def createDockerHubSecret(Map config = [:]) {
+        def clusterNameMaps = [ [ clusterName : "cluster-1", serviceAccount :
+                "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
+                                  project : "primal-catfish-346210", key : "", zone : "asia-southeast1-b" ] ]
+        def userNameMaps = [ username : "giahai99", password : "", dockerEmail : "Haidepzai_kut3@yahoo.com" ]
+
 
         withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
                                                                                                                                  [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
@@ -40,7 +42,7 @@ class StageOperator {
         }
     }
 
-    def other(Map config = [:]) {
+    def checkoutBuildAndPushImage(Map config = [:]) {
         script {
             git.checkOut(branch: "main", url: "https://github.com/giahai99/devops-first-prj.git")
             kaniko.buildAndPushImage(dockerImage: "giahai99/javaapp", tag: BUILD_NUMBER)
@@ -67,4 +69,3 @@ class StageOperator {
             }
         }
     }
-}
