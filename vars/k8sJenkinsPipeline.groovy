@@ -1,5 +1,8 @@
 #!/usr/bin/env groovy
-PodTemplate podTemplate = new PodTemplate()
+
+class k8sJenkinsPipeline {
+
+PodTemplate podTemplate1 = new PodTemplate()
 def call() {
 
 //    PodTemplate podTemplate = new PodTemplate()
@@ -19,17 +22,7 @@ def call() {
 //    def tag = "${UUID.randomUUID().toString()}".take(5)
 //    def imageName = "${registryRepository}:${tag}"
 
-    podTemplate(yaml: """
-kind: Pod
-spec:
-  containers:
-  - name: claranet
-    image: claranet/gcloud-kubectl-docker:latest
-    imagePullPolicy: Always
-    command:
-    - cat
-    tty: true
-""") {
+    podTemplate(yaml: podTemplate1.addClaranetBuilder()) {
         node(POD_LABEL) {
 //            PodTemplate podTemplate = new PodTemplate()
             StageOperator stageOperator = new StageOperator()
@@ -44,7 +37,7 @@ spec:
             }
         }
     }
-
+}
 //    podTemplate(yaml: podTemplate.addKanikoBuilder()) {
 ////        kubernetes {
 //
