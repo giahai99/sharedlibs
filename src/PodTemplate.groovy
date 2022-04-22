@@ -50,17 +50,3 @@ def addKanikoBuilder() {
     return getDefaultTemplate(kanikoBuilder,KanikoVolume)
 }
 
-def getClaranetemplate() {
-    return """
-kind: Pod
-spec:
-  containers:
-  - name: claranet
-    image: claranet/gcloud-kubectl-docker:latest
-    imagePullPolicy: Always
-    command:
-    - cat
-    tty: true
-"""
-}
-
