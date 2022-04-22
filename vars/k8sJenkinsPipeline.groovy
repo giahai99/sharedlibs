@@ -48,7 +48,7 @@ spec:
             - key: .dockerconfigjson
               path: config.json
 """) {
-        node(label) {
+        node(POD_LABEL) {
             stage('Checkout') {
                 checkout scm
             }
