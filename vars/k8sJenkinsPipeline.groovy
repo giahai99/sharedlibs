@@ -6,9 +6,9 @@ def call() {
 
 
 
-//    podTemplate {
+    podTemplate(yaml: podTemplate.addKanikoBuilder()) {
 //        kubernetes {
-//            yaml podTemplate.addKanikoBuilder()
+
 //        }
         node(podTemplate.addKanikoBuilder()) {
             stage('Create secret for docker hub') {
@@ -23,7 +23,7 @@ def call() {
 
             }
         }
-//    }
+    }
 
 
 
