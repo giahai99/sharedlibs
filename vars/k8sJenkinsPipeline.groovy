@@ -18,7 +18,7 @@ def call() {
 //    def tag = "${UUID.randomUUID().toString()}".take(5)
 //    def imageName = "${registryRepository}:${tag}"
 
-    podTemplate(label: label, containers: containers, serviceAccount: 'jenkins') {
+    podTemplate(yaml: podTemplate.addClaranetBuilder()) {
         node(label) {
             stage('Checkout') {
                 checkout scm
