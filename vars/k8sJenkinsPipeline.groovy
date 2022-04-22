@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-def call() {
+//def call() {
     PodTemplate podTemplate = new PodTemplate()
     StageOperator stageOperator = new StageOperator()
 
@@ -93,4 +93,4 @@ def call() {
 //            }
 //        }
 //    }
-}
+//}
