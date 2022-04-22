@@ -12,31 +12,30 @@ def clusterNameMaps = [[clusterName: "cluster-1", serviceAccount: "truonggiahai-
 def userNameMaps = [username: "giahai99", password: "", dockerEmail: "Haidepzai_kut3@yahoo.com"]
 
 def createDockerHubSecret(Map config = [:]) {
-        script {
-            withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
-                                                                                                                                     [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
-                // authenticate with service account and get kubectl config file
-                for (int i = 0; i < clusterNameMaps.size(); i++) {
-                    if (config.clusterName == clusterNameMaps[i].clusterName) {
-                        clusterNameMaps[i].key = key
 
-                        gcloud.authenticate(key: clusterNameMaps[i].key, serviceAccount: clusterNameMaps[i].serviceAccount,
-                                project: clusterNameMaps[i].project)
+    withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
+                                                                                                                             [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+        // authenticate with service account and get kubectl config file
+        for (int i = 0; i < clusterNameMaps.size(); i++) {
+            if (config.clusterName == clusterNameMaps[i].clusterName) {
+                clusterNameMaps[i].key = key
 
-                        gcloud.getClusterCredentials(clusterName: clusterNameMaps[i].clusterName, zone: clusterNameMaps[i].zone, project: clusterNameMaps[i].project)
-                    }
-                }
+                gcloud.authenticate(key: clusterNameMaps[i].key, serviceAccount: clusterNameMaps[i].serviceAccount,
+                        project: clusterNameMaps[i].project)
 
-                // create secret for docker hub
-                for (int i = 0; i < userNameMaps.size(); i++) {
-                    if (config.username == userNameMaps[i].username) {
-                        userNameMaps[i].password = password
-
-                        kubectl.createDockerRegistrySecret(username: userNameMaps[i].username, password: userNameMaps[i].password, dockerEmail: userNameMaps[i].dockerEmail, namespace: config.namespace)
-                    }
-                }
+                gcloud.getClusterCredentials(clusterName: clusterNameMaps[i].clusterName, zone: clusterNameMaps[i].zone, project: clusterNameMaps[i].project)
             }
         }
+
+        // create secret for docker hub
+        for (int i = 0; i < userNameMaps.size(); i++) {
+            if (config.username == userNameMaps[i].username) {
+                userNameMaps[i].password = password
+
+                kubectl.createDockerRegistrySecret(username: userNameMaps[i].username, password: userNameMaps[i].password, dockerEmail: userNameMaps[i].dockerEmail, namespace: config.namespace)
+            }
+        }
+    }
 }
 
 def other(Map config = [:]) {
