@@ -1,68 +1,72 @@
 #!/usr/bin/env groovy
 
-//    PodTemplate podTemplate = new PodTemplate()
+def createDockerHubSecret(Map config = [:]) {
+    Kubectl kubectl = new Kubectl()
+    Gcloud gcloud = new Gcloud()
 
-    def createDockerHubSecret(Map config = [:]) {
-        Kubectl kubectl = new Kubectl()
-        Gcloud gcloud = new Gcloud()
+    def clusterNameMaps = [ [ clusterName : "cluster-1", serviceAccount :
+            "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
+                              project : "primal-catfish-346210", zone : "asia-southeast1-b" ] ]
+    def userNameMaps = [ [ username : "giahai99", dockerEmail : "Haidepzai_kut3@yahoo.com" ] ]
 
-        def clusterNameMaps = [ [ clusterName : "cluster-1", serviceAccount :
-                "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
-                                  project : "primal-catfish-346210", key : "", zone : "asia-southeast1-b" ] ]
-        def userNameMaps = [ [ username : "giahai99", password : "", dockerEmail : "Haidepzai_kut3@yahoo.com" ] ]
+        // authenticate with service account and get kubectl config file
+        for (int i = 0; i < clusterNameMaps.size(); i++) {
+            if (config.clusterName == clusterNameMaps[i].clusterName) {
 
+                gcloud.authenticate(key: config.key, serviceAccount: clusterNameMaps[i].serviceAccount,
+                        project: clusterNameMaps[i].project)
 
-        withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
-                                                                                                                                 [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
-            // authenticate with service account and get kubectl config file
-            for (int i = 0; i < clusterNameMaps.size(); i++) {
-                if (config.clusterName == clusterNameMaps[i].clusterName) {
-                    clusterNameMaps[i].key = key
-
-                    gcloud.authenticate(key: clusterNameMaps[i].key, serviceAccount: clusterNameMaps[i].serviceAccount,
-                            project: clusterNameMaps[i].project)
-
-                    gcloud.getClusterCredentials(clusterName: clusterNameMaps[i].clusterName, zone: clusterNameMaps[i].zone, project: clusterNameMaps[i].project)
-                }
+                gcloud.getClusterCredentials(clusterName: clusterNameMaps[i].clusterName, zone: clusterNameMaps[i].zone, project: clusterNameMaps[i].project)
             }
+        }
 
-            // create secret for docker hub
-            for (int i = 0; i < userNameMaps.size(); i++) {
-                if (config.username == userNameMaps[i].username) {
-                    userNameMaps[i].password = password
+        // create secret for docker hub
+        for (int i = 0; i < userNameMaps.size(); i++) {
+            if (config.username == userNameMaps[i].username) {
 
-                    kubectl.createDockerRegistrySecret(username: userNameMaps[i].username, password: userNameMaps[i].password, dockerEmail: userNameMaps[i].dockerEmail, namespace: config.namespace)
-                }
-            }
+                kubectl.createDockerRegistrySecret(username: userNameMaps[i].username, password: config.password, dockerEmail: userNameMaps[i].dockerEmail, namespace: config.namespace)
+
         }
     }
+}
 
-    def checkoutBuildAndPushImage(Map config = [:]) {
-        Git git = new Git()
-        Kaniko kaniko = new Kaniko()
-            git.checkOut(branch: "main", url: "https://github.com/giahai99/devops-first-prj.git")
-            kaniko.buildAndPushImage(dockerImage: "giahai99/javaapp", tag: BUILD_NUMBER)
-        }
+def checkoutBuildAndPushImage(Map config = [:]) {
+    Git git = new Git()
+    Kaniko kaniko = new Kaniko()
+    git.checkOut(branch: config.branch, url: config.url)
+    kaniko.buildAndPushImage(dockerImage: config.dockerImage, tag: BUILD_NUMBER)
+    }
 
 
-    def other(Map config = [:]) {
-        // Running Docker container, make sure port 8080 is opened in
-        stage('Deploy App to Kubernetes') {
-            steps {
-                script {
-                    withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]
-                                                                                                                                             , [path: 'kv/github-token', secretValues: [[vaultKey: 'token']]]]) {
+def deployAppToKubernetes(Map config = [:]) {
+    Git git = new Git()
+    Kubectl kubectl = new Kubectl()
 
-                        git.pull(token: token, organization: "giahai99", resporitory: "devops-first-prj.git")
 
-                        kubectl.createGenericSecret(secretName: "db-user-pass", username: username, password: password)
+        def organizationMap = [ [ token : "", organization: "giahai99" ] ]
 
-                        kubectl.applyFiles(nameSpace: "devops-tools", fileList: ["my-app-service.yml", "mysql-config.yml", "my-app-deployment.yml"], directory: "devops-first-prj")
+        def respositoryMap = [ [organization: "giahai99", resporitory: "devops-first-prj.git", filesDeployment: ["my-app-service.yml", "mysql-config.yml", "my-app-deployment.yml"],
+                               deploymentName: "book-deployment", containerName: "my-book-management", dockerImage: "giahai99/javaapp"] ]
 
-                        kubectl.setDeploymentImage(nameSpace: "devops-tools", deploymentName: "book-deployment", containerName: "my-book-management", dockerImage: "giahai99/javaapp", tag: BUILD_NUMBER)
+        for (int i = 0; i < organizationMap.size(); i++) {
+            if (config.organization == organizationMap[i].organization) {
+                organizationMap[i].token = token
 
-                    }
-                }
+                git.pull(token: organizationMap[i].token, organization: organizationMap[i].organization, resporitory: config.resporitory)
             }
         }
-    }
+
+        kubectl.createK8sSecret(secretName: config.secretName, secrets: config.secrets, namespace: config.namespace)
+
+        for (int i = 0; i < respositoryMap.size(); i++) {
+            if (config.resporitory == respositoryMap[i].resporitory && config.organization == respositoryMap[i].organization) {
+
+                String directory = config.resporitory.minus(".git")
+
+                kubectl.applyFiles(namespace: config.namespace, filesDeployment: respositoryMap[i].filesDeployment, directory: directory)
+
+                kubectl.setDeploymentImage(namespace: config.namespace, deploymentName: respositoryMap[i].deploymentName, containerName: respositoryMap[i].containerName, dockerImage: respositoryMap[i].dockerImage, tag: BUILD_NUMBER)
+
+            }
+        }
+}

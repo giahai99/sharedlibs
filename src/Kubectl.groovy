@@ -16,11 +16,22 @@ def createDockerRegistrySecret(Map config = [:]) {
     }
 }
 
-def createGenericSecret(Map config = [:]) {
-    container('claranet') {
-        sh "kubectl --namespace=devops-tools create secret generic $config.secretName --from-literal=username=$config.username --from-literal=password=$config.password"
+def createK8sSecret(Map config = [:]) {
+    def cmd = "kubectl --namespace=$config.namespace create secret ${config.secretName}"
+    config.secrets.each { k, v ->
+        cmd += "--from-literak=${k}=${v}"
     }
 }
+
+
+//def createGenericSecret(Map config = [:]) {
+//    container('claranet') {
+//        sh "kubectl --namespace=devops-tools create secret generic $config.secretName --from-literal=username=$config.username --from-literal=password=$config.password"
+//    }
+//}
+
+
+
 
 def setDeploymentImage(Map config = [:]) {
     container('claranet') {
