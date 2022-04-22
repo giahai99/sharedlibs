@@ -1,8 +1,7 @@
 
-
-
 PodTemplate podTemplate = new PodTemplate()
-podTemplate.addClaranetBuilder()
-podTemplate.addKanikoBuilder()
 
-println (podTemplate.addKanikoBuilder())
+def containerNames = [podTemplate.getClaranetBuilder()[0], podTemplate.getKanikoBuilder()[0]]
+def volumeNames = [podTemplate.getClaranetBuilder()[1] ,podTemplate.getKanikoBuilder()[1]]
+
+println (podTemplate.getDefaultTemplate(containerName, volumeName))
