@@ -18,7 +18,36 @@ def call() {
 //    def tag = "${UUID.randomUUID().toString()}".take(5)
 //    def imageName = "${registryRepository}:${tag}"
 
-    podTemplate(yaml: podTemplate.addClaranetBuilder()) {
+    podTemplate(yaml: """
+kind: Pod
+spec:
+  containers:
+  - name: claranet
+    image: claranet/gcloud-kubectl-docker:latest
+    imagePullPolicy: Always
+    command:
+    - cat
+    tty: true
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    imagePullPolicy: Always
+    command:
+    - sleep
+    args:
+    - 9999999
+    volumeMounts:
+      - name: jenkins-docker-cfg
+        mountPath: /kaniko/.docker
+  volumes:
+  - name: jenkins-docker-cfg
+    projected:
+      sources:
+      - secret:
+          name: docker-credentials
+          items:
+            - key: .dockerconfigjson
+              path: config.json
+""") {
         node(label) {
             stage('Checkout') {
                 checkout scm
