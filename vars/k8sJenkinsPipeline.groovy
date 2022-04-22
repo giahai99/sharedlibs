@@ -1,10 +1,7 @@
 #!/usr/bin/env groovy
 
-class k8sJenkinsPipeline {
-
 def call() {
-    PodTemplate podTemplate = new PodTemplate()
-    StageOperator stageOperator = new StageOperator()
+
 //    PodTemplate podTemplate = new PodTemplate()
 //    StageOperator stageOperator = new StageOperator()
 
@@ -53,6 +50,8 @@ spec:
               path: config.json
 """) {
         node(POD_LABEL) {
+            PodTemplate podTemplate = new PodTemplate()
+            StageOperator stageOperator = new StageOperator()
             stage('Create secret for docker hub') {
                 withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
                                                                                                                                          [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
@@ -64,7 +63,7 @@ spec:
             }
         }
     }
-}
+
 //    podTemplate(yaml: podTemplate.addKanikoBuilder()) {
 ////        kubernetes {
 //
