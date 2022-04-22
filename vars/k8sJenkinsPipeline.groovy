@@ -4,12 +4,14 @@ def call() {
     PodTemplate podTemplate = new PodTemplate()
     StageOperator stageOperator = new StageOperator()
 
-    agent {
-        kubernetes {
-            yaml podTemplate.addClaranetBuilder()
-        }
+
+
 
         node {
+            kubernetes {
+                yaml podTemplate.addClaranetBuilder()
+            }
+
             stage('Create secret for docker hub') {
 
 
@@ -22,7 +24,7 @@ def call() {
 
             }
         }
-    }
+
 
     agent {
         kubernetes {
