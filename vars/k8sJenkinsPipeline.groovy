@@ -6,6 +6,7 @@ def call() {
     Kaniko kaniko = new Kaniko()
     Kubectl kubectl = new Kubectl()
     Gcloud gcloud = new Gcloud()
+    StageOperator stageOperator = new StageOperator()
 
     pipeline {
         agent {
@@ -15,22 +16,7 @@ def call() {
         }
 
         stages {
-            stage('Create secret for docker hub') {
-                steps {
-                        script {
-                            withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
-                                                                                                                                                     [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
-
-                                gcloud.authenticate(key:key,serviceAccount:"truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",project:"primal-catfish-346210")
-
-                                gcloud.getClusterCredentials(clusterName:"cluster-1",zone:"asia-southeast1-b",project:"primal-catfish-346210")
-
-                                kubectl.createDockerRegistrySecret(username:"giahai99",password:password,dockerEmail:"Haidepzai_kut3@yahoo.com",nameSpace:"devops-tools")
-
-                            }
-                        }
-                }
-            }
+            stageOperator.createDockerHubSecret(clusterName: "cluster-1", username: "giahai99", namespace: "devops-tools")
             
             stage('Checkout and Build With Kaniko') {
                 agent { 
@@ -40,8 +26,8 @@ def call() {
                 }
                 steps {
                         script{
-                            git.checkOut(branch:"main", url:"https://github.com/giahai99/devops-first-prj.git")
-                            kaniko.buildAndPushImage(dockerImage:"giahai99/javaapp", tag:"${BUILD_NUMBER}")
+                            git.checkOut(branch: "main", url: "https://github.com/giahai99/devops-first-prj.git")
+                            kaniko.buildAndPushImage(dockerImage: "giahai99/javaapp", tag: BUILD_NUMBER)
                     }
                 }
             }
@@ -54,13 +40,13 @@ def call() {
                             withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]
                             , [path: 'kv/github-token', secretValues: [[vaultKey: 'token']]]]) {
 
-                                git.pull(token:token, organization:"giahai99", resporitory:"devops-first-prj.git")
+                                git.pull(token: token, organization: "giahai99", resporitory: "devops-first-prj.git")
                                 
-                                kubectl.createGenericSecret(secretName:"db-user-pass" ,username:username, password:password)
+                                kubectl.createGenericSecret(secretName: "db-user-pass" , username: username, password: password)
 
                                 kubectl.applyFiles(nameSpace:"devops-tools",fileList:["my-app-service.yml","mysql-config.yml","my-app-deployment.yml"], directory:"devops-first-prj")
 
-                                kubectl.setDeploymentImage(nameSpace:"devops-tools",deploymentName:"book-deployment",containerName:"my-book-management",dockerImage:"giahai99/javaapp",tag:"${BUILD_NUMBER}")
+                                kubectl.setDeploymentImage(nameSpace:"devops-tools",deploymentName:"book-deployment",containerName:"my-book-management",dockerImage:"giahai99/javaapp",tag:BUILD_NUMBER)
 
                         }
                     }

@@ -12,7 +12,7 @@ def applyFiles(Map config = [:]) {
 
 def createDockerRegistrySecret(Map config = [:]) {
     container('claranet') {
-        sh "kubectl create secret docker-registry docker-credentials --docker-username=$config.username --docker-password=$config.password --docker-email=$config.dockerEmail  --namespace=$config.nameSpace"
+        sh "kubectl create secret docker-registry docker-credentials --docker-username=$config.username --docker-password=$config.password --docker-email=$config.dockerEmail  --namespace=$config.namespace"
     }
 }
 
