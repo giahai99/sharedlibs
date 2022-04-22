@@ -7,10 +7,10 @@ def call() {
 
 
 
-        node {
-            kubernetes {
-                yaml podTemplate.addClaranetBuilder()
-            }
+        node(kubernetes {
+            yaml podTemplate.addClaranetBuilder()
+        }) {
+
 
             stage('Create secret for docker hub') {
 
