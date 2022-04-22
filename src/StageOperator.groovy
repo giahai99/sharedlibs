@@ -2,15 +2,17 @@
 
 
 
-    PodTemplate podTemplate = new PodTemplate()
-    Git git = new Git()
-    Kaniko kaniko = new Kaniko()
-    Kubectl kubectl = new Kubectl()
-    Gcloud gcloud = new Gcloud()
+//    PodTemplate podTemplate = new PodTemplate()
+//    Git git = new Git()
+//    Kaniko kaniko = new Kaniko()
+
 
 
 
     def createDockerHubSecret(Map config = [:]) {
+        Kubectl kubectl = new Kubectl()
+        Gcloud gcloud = new Gcloud()
+
         def clusterNameMaps = [ [ clusterName : "cluster-1", serviceAccount :
                 "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
                                   project : "primal-catfish-346210", key : "", zone : "asia-southeast1-b" ] ]
