@@ -30,8 +30,8 @@ def call() {
             }
         }
 
-    containerNames.remove(podTemp.size()-1)
-    volumeNames.remove(podTemp.size()-1)
+    containerNames.remove(podTemp.size-1)
+    volumeNames.remove(podTemp.size-1)
 
     podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
         node(POD_LABEL) {
