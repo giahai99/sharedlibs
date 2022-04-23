@@ -4,12 +4,10 @@ def call() {
     PodTemplate podTemp = new PodTemplate()
     StageOperator stageOperator = new StageOperator()
 
-    def containerNames = [podTemp.getClaranetBuilder()[0], podTemp.getKanikoBuilder()[0]]
-    def volumeNames = [podTemp.getClaranetBuilder()[1] ,podTemp.getKanikoBuilder()[1]]
+    def containerNames = [podTemplate.getClaranetBuilder()[0]]
+    def volumeNames = [podTemplate.getClaranetBuilder()[1]]
 
-    String template = podTemp.getDefaultTemplate(containerNames, volumeNames)
-
-    podTemplate(yaml: template) {
+    podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
         node(POD_LABEL) {
             stage('Create secret for docker hub') {
                 withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
@@ -21,29 +19,10 @@ def call() {
         }
     }
 
-    podTemplate(yaml: """
-kind: Pod
-spec:
-  containers:
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
-    imagePullPolicy: Always
-    command:
-    - sleep
-    args:
-    - 9999999
-    volumeMounts:
-    - name: jenkins-docker-cfg
-      mountPath: /kaniko/.docker  
-  volumes:
-  - name: jenkins-docker-cfg
-    projected:
-      sources:
-      - secret:
-          name: docker-credentials
-          items:
-            - key: .dockerconfigjson
-              path: config.json""") {
+    containerNames.add(podTemplate.getKanikoBuilder()[0])
+    volumeNames.add(podTemplate.getKanikoBuilder()[1])
+
+    podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
         node(POD_LABEL) {
             stage('Checkout and Build With Kaniko') {
                 stageOperator.checkoutBuildAndPushImage(branch: "main", url: "https://github.com/giahai99/devops-first-prj.git", dockerImage: "giahai99/javaapp")
@@ -51,18 +30,10 @@ spec:
             }
         }
 
-    podTemplate(yaml: """
-kind: Pod
-spec:
-  containers:
-  - name: jnlp
-    image: 'jenkins/inbound-agent:4.7-1'
-  - name: claranet
-    image: claranet/gcloud-kubectl-docker:latest
-    imagePullPolicy: Always
-    command:
-    - cat
-    tty: true""") {
+    containerNames.remove(podTemplate.size()-1)
+    volumeNames.remove(podTemplate.size()-1)
+
+    podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
         node(POD_LABEL) {
             stage('Create secret for docker hub') {
                 withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/github-token', secretValues: [[vaultKey: 'token']]],
