@@ -10,12 +10,12 @@ def createDockerHubSecret(Map config = [:]) {
 
             if ( checkClusterName(config.clusterName) != null) {
 
-                def clusterNameMaps = checkClusterName(config.clusterName)
+                def clusterNameMap = checkClusterName(config.clusterName)
 
-                gcloud.authenticate(key: config.key, serviceAccount: clusterNameMaps[i].serviceAccount,
-                        project: clusterNameMaps[i].project)
+                gcloud.authenticate(key: config.key, serviceAccount: clusterNameMap.serviceAccount,
+                        project: clusterNameMap.project)
 
-                gcloud.getClusterCredentials(clusterName: clusterNameMaps[i].clusterName, zone: clusterNameMaps[i].zone, project: clusterNameMaps[i].project)
+                gcloud.getClusterCredentials(clusterName: clusterNameMap.clusterName, zone: clusterNameMap.zone, project: clusterNameMap.project)
 
         }
 
@@ -57,12 +57,12 @@ def deployAppToKubernetes(Map config = [:]) {
 
             if ( checkClusterName(config.clusterName) != null) {
 
-                def clusterNameMaps = checkClusterName(config.clusterName)
+                def clusterNameMap = checkClusterName(config.clusterName)
 
-                gcloud.authenticate(key: config.key, serviceAccount: clusterNameMaps[i].serviceAccount,
-                        project: clusterNameMaps[i].project)
+                gcloud.authenticate(key: config.key, serviceAccount: clusterNameMap.serviceAccount,
+                        project: clusterNameMap.project)
 
-                gcloud.getClusterCredentials(clusterName: clusterNameMaps[i].clusterName, zone: clusterNameMaps[i].zone, project: clusterNameMaps[i].project)
+                gcloud.getClusterCredentials(clusterName: clusterNameMap.clusterName, zone: clusterNameMap.zone, project: clusterNameMap.project)
 
             }
 
@@ -96,7 +96,7 @@ private checkClusterName (String clusterName) {
 
     for (int i = 0; i < clusterNameMaps.size(); i++) {
         if (clusterName == clusterNameMaps[i].clusterName) {
-            return clusterNameMaps
+            return clusterNameMaps[i]
         }
         return null
     }
