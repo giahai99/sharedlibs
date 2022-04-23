@@ -1,38 +1,35 @@
 
-def getDefaultTemplate(def addContainers=[""],def addVolumes=[""]) {
-    String containerName = """kind: Pod
+class PodTemplate {
+
+    String volumesField = """
+  volumes:
+  """
+
+    def getTemplate(def addContainers = [""], def addVolumes = [""]) {
+        return (containersField + volumesField)
+    }
+
+    String containersField = """kind: Pod
 spec:
   containers:
   - name: jnlp
     image: 'jenkins/inbound-agent:4.7-1'
   """
-    for(int i=0; i<addContainers.size(); i++)
-    {
-        containerName += addContainers[i]
-    }
-     String volumeName = """
-  volumes:
-  """
-    for(int i=0; i < addContainers.size(); i++)
-    {
-        volumeName += addVolumes[i]
-    }
-    return (containerName + volumeName)
-}
 
-def getClaranetBuilder() {
-    String claranetBuilder = """- name: claranet
+    def addClaranetBuilder() {
+
+        containersField += """- name: claranet
     image: claranet/gcloud-kubectl-docker:latest
     imagePullPolicy: Always
     command:
     - cat
     tty: true
   """
-    return [claranetBuilder , ""]
-}
+    }
 
-def getKanikoBuilder() {
-    String kanikoBuilder = """- name: kaniko
+    def addKanikoBuilder() {
+
+        containersField += """- name: kaniko
     image: gcr.io/kaniko-project/executor:debug
     imagePullPolicy: Always
     command:
@@ -42,7 +39,8 @@ def getKanikoBuilder() {
     volumeMounts:
     - name: jenkins-docker-cfg
       mountPath: /kaniko/.docker  """
-    String KanikoVolume = """- name: jenkins-docker-cfg
+
+        volumesField += """- name: jenkins-docker-cfg
     projected:
       sources:
       - secret:
@@ -50,9 +48,8 @@ def getKanikoBuilder() {
           items:
             - key: .dockerconfigjson
               path: config.json  """
-    return [kanikoBuilder , KanikoVolume]
+    }
 }
-
 
 
 

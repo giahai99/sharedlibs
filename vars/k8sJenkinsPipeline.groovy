@@ -1,13 +1,15 @@
 #!/usr/bin/env groovy
 
 def call() {
-    PodTemplate podTemp = new PodTemplate()
     StageOperator stageOperator = new StageOperator()
 
-    def containerNames = [podTemp.getClaranetBuilder()[0]]
-    def volumeNames = [podTemp.getClaranetBuilder()[1]]
+    PodTemplate podTempClaranet = new PodTemplate()
+    podTempClaranet.addClaranetBuilder()
 
-    podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
+    PodTemplate podTempKaniko = new PodTemplate()
+    podTempKaniko.addKanikoBuilder()
+
+    podTemplate(yaml: podTempClaranet.getTemplate()) {
         node(POD_LABEL) {
             stage('Create secret for docker hub') {
                 withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
@@ -19,10 +21,7 @@ def call() {
         }
     }
 
-    containerNames.add(podTemp.getKanikoBuilder()[0])
-    volumeNames.add(podTemp.getKanikoBuilder()[1])
-
-    podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
+    podTemplate(yaml: podTempKaniko.getTemplate()) {
         node(POD_LABEL) {
             stage('Checkout and Build With Kaniko') {
                 stageOperator.checkoutBuildAndPushImage(branch: "main", url: "https://github.com/giahai99/devops-first-prj.git", dockerImage: "giahai99/javaapp")
@@ -30,10 +29,7 @@ def call() {
             }
         }
 
-    containerNames.remove(containerNames.size-1)
-    volumeNames.remove(volumeNames.size-1)
-
-    podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
+    podTemplate(yaml: podTempClaranet.getTemplate()) {
         node(POD_LABEL) {
 
             stage('Create secret for docker hub') {
