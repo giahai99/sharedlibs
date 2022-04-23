@@ -4,8 +4,8 @@ def call() {
     PodTemplate podTemp = new PodTemplate()
     StageOperator stageOperator = new StageOperator()
 
-    def containerNames = [podTemplate.getClaranetBuilder()[0]]
-    def volumeNames = [podTemplate.getClaranetBuilder()[1]]
+    def containerNames = [podTemp.getClaranetBuilder()[0]]
+    def volumeNames = [podTemp.getClaranetBuilder()[1]]
 
     podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
         node(POD_LABEL) {
@@ -19,8 +19,8 @@ def call() {
         }
     }
 
-    containerNames.add(podTemplate.getKanikoBuilder()[0])
-    volumeNames.add(podTemplate.getKanikoBuilder()[1])
+    containerNames.add(podTemp.getKanikoBuilder()[0])
+    volumeNames.add(podTemp.getKanikoBuilder()[1])
 
     podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
         node(POD_LABEL) {
@@ -30,8 +30,8 @@ def call() {
             }
         }
 
-    containerNames.remove(podTemplate.size()-1)
-    volumeNames.remove(podTemplate.size()-1)
+    containerNames.remove(podTemp.size()-1)
+    volumeNames.remove(podTemp.size()-1)
 
     podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
         node(POD_LABEL) {
