@@ -35,11 +35,13 @@ def call() {
 
     podTemplate(yaml: podTemp.getDefaultTemplate(containerNames, volumeNames)) {
         node(POD_LABEL) {
+
             stage('Create secret for docker hub') {
                 withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/github-token', secretValues: [[vaultKey: 'token']]],
-                                                                                                                                         [path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]]) {
-                    stageOperator.deployAppToKubernetes(organization: "giahai99", token: token, resporitory: "devops-first-prj.git", secretName: "db-user-pass",
-                            secrets: [username: username, password: password], namespace: "devops-tools")
+                              [path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]], [path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
+
+                    stageOperator.deployAppToKubernetes(organization: "giahai99", token: token, resporitory: "devops-first-prj.git", clusterName: "cluster-1", serviceAccountKey: key,
+                            secretName: "db-user-pass", secrets: [username: username, password: password], namespace: "devops-tools")
                 }
             }
 

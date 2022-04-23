@@ -4,20 +4,19 @@ def createDockerHubSecret(Map config = [:]) {
     Kubectl kubectl = new Kubectl()
     Gcloud gcloud = new Gcloud()
 
-    def clusterNameMaps = [ [ clusterName : "cluster-1", serviceAccount :
-            "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
-                              project : "primal-catfish-346210", zone : "asia-southeast1-b" ] ]
     def userNameMaps = [ [ username : "giahai99", dockerEmail : "Haidepzai_kut3@yahoo.com" ] ]
 
         // authenticate with service account and get kubectl config file
-        for (int i = 0; i < clusterNameMaps.size(); i++) {
-            if (config.clusterName == clusterNameMaps[i].clusterName) {
+
+            if ( checkClusterName(config.clusterName) != null) {
+
+                def clusterNameMaps = checkClusterName(config.clusterName)
 
                 gcloud.authenticate(key: config.key, serviceAccount: clusterNameMaps[i].serviceAccount,
                         project: clusterNameMaps[i].project)
 
                 gcloud.getClusterCredentials(clusterName: clusterNameMaps[i].clusterName, zone: clusterNameMaps[i].zone, project: clusterNameMaps[i].project)
-            }
+
         }
 
         // create secret for docker hub
@@ -39,13 +38,9 @@ def checkoutBuildAndPushImage(Map config = [:]) {
 
 
 def deployAppToKubernetes(Map config = [:]) {
-    container("claranet") {
-        withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
-                                                                                                                                 [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
-
-
             Git git = new Git()
             Kubectl kubectl = new Kubectl()
+            Gcloud gcloud = new Gcloud()
 
             def organizationMap = [[token: "", organization: "giahai99"]]
 
@@ -60,16 +55,21 @@ def deployAppToKubernetes(Map config = [:]) {
                 }
             }
 
-            sh 'echo $key > key.json'
-            sh 'cat key.json'
-            sh 'gcloud auth activate-service-account truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com --key-file=key.json --project=primal-catfish-346210'
-            sh 'gcloud container clusters get-credentials cluster-1 --zone asia-southeast1-b --project primal-catfish-346210'
+            if ( checkClusterName(config.clusterName) != null) {
+
+                def clusterNameMaps = checkClusterName(config.clusterName)
+
+                gcloud.authenticate(key: config.key, serviceAccount: clusterNameMaps[i].serviceAccount,
+                        project: clusterNameMaps[i].project)
+
+                gcloud.getClusterCredentials(clusterName: clusterNameMaps[i].clusterName, zone: clusterNameMaps[i].zone, project: clusterNameMaps[i].project)
+
+            }
 
             kubectl.createK8sSecret(secretName: config.secretName, secrets: config.secrets, namespace: config.namespace)
 
             for (int i = 0; i < respositoryMap.size(); i++) {
                 if (config.resporitory == respositoryMap[i].resporitory && config.organization == respositoryMap[i].organization) {
-
 
                     String directory = config.resporitory.minus(".git")
 
@@ -77,8 +77,7 @@ def deployAppToKubernetes(Map config = [:]) {
 
                     kubectl.setDeploymentImage(namespace: config.namespace, deploymentName: respositoryMap[i].deploymentName, containerName: respositoryMap[i].containerName, dockerImage: respositoryMap[i].dockerImage, tag: BUILD_NUMBER)
 
-                }
-            }
+
         }
     }
 }
@@ -88,6 +87,19 @@ def deleteSecretAfterRun(Map config = [:]) {
     Kubectl kubectl = new Kubectl()
 
     kubectl.deleteSecretAfterRun(namespace: config.namespace, secrets: config.secrets)
+}
+
+private checkClusterName (String clusterName) {
+    def clusterNameMaps = [[clusterName: "cluster-1", serviceAccount:
+            "truonggiahai-newaccount-primal@primal-catfish-346210.iam.gserviceaccount.com",
+                            project    : "primal-catfish-346210", zone: "asia-southeast1-b"]]
+
+    for (int i = 0; i < clusterNameMaps.size(); i++) {
+        if (clusterName == clusterNameMaps[i].clusterName) {
+            return clusterNameMaps
+        }
+        return null
+    }
 }
 
 
