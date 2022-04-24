@@ -4,11 +4,11 @@ def authenticate(Map config = [:]) {
     container('claranet') {
         String key = config.key
 //        println(key)
-//        writeFile(file: 'key.json', text: key)
+        writeFile(file: "key.json", text: key)
 //        sh 'cat key.json'
 //        sh 'set +x ;echo $key > key.json'
-        sh 'echo $key'
-        sh 'set +x; echo $key > key.json'
+//        sh 'echo $key'
+//        sh 'set +x; echo $key > key.json'
         sh "gcloud auth activate-service-account $config.serviceAccount --key-file=key.json --project=$config.project"
     }
 }
