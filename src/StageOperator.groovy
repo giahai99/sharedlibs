@@ -84,7 +84,17 @@ def deleteSecretAfterRun(Map config = [:]) {
 
     Kubectl kubectl = new Kubectl()
 
-    kubectl.deleteSecretAfterRun(namespace: config.namespace, secrets: config.secrets)
+    if ( checkClusterName(config.clusterName) != null) {
+
+        def clusterNameMap = checkClusterName(config.clusterName)
+
+        gcloud.authenticate(key: config.serviceAccountKey, serviceAccount: clusterNameMap.serviceAccount,
+                project: clusterNameMap.project)
+
+        gcloud.getClusterCredentials(clusterName: clusterNameMap.clusterName, zone: clusterNameMap.zone, project: clusterNameMap.project)
+
+        kubectl.deleteSecretAfterRun(namespace: config.namespace, secrets: config.secrets)
+    }
 }
 
 private checkClusterName (String clusterName) {

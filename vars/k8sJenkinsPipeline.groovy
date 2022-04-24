@@ -34,14 +34,14 @@ def call() {
                                 secretName: "db-user-pass", secrets: [username: username, password: password], namespace: "devops-tools")
                     }
                 }
-                stage('Clean up after run') {
-                    stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"])
-                }
             }
             finally {
-//                stage('Clean up after run') {
-//                    stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"])
-//                }
+                stage('Clean up after run') {
+                    withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]], [path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
+
+                        stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"], clusterName: "cluster-1", serviceAccountKey: key)
+                    }
+                }
             }
         }
     }
