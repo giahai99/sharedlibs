@@ -14,9 +14,9 @@ def call() {
             stage('Create secret for docker hub') {
                 withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
                                                                                                                                          [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
-
-                    stageOperator.createDockerHubSecret(serviceAccountKey: key, clusterName: "cluster-1", username: "giahai99", password: password, namespace: "devops-tools")
                     println(key)
+                    stageOperator.createDockerHubSecret(serviceAccountKey: key, clusterName: "cluster-1", username: "giahai99", password: password, namespace: "devops-tools")
+
                 }
             }
         }
