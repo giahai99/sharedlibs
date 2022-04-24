@@ -7,7 +7,7 @@ def authenticate(Map config = [:]) {
 //        writeFile(file: 'zorg.txt', text: data)
         writeFile(file: 'key1.json', text: 'aaaa')
         sh 'cat key1.json'
-        writeFile(file: 'key.json', text: config.key)
+        writeFile(file: 'key.json', text: "${config.key}")
         sh 'cat key.json'
 //        sh 'set +x ;echo $key > key.json'
         sh "gcloud auth activate-service-account $config.serviceAccount --key-file=key.json --project=$config.project"
