@@ -7,8 +7,9 @@ def call() {
     podTempClaranet.addClaranetBuilder()
 
     PodTemplate podTempKanikoAndClaranet = new PodTemplate()
-    podTempKanikoAndClaranet.addKanikoBuilder()
     podTempKanikoAndClaranet.addClaranetBuilder()
+    podTempKanikoAndClaranet.addKanikoBuilder()
+
 
     podTemplate(yaml: podTempClaranet.getTemplate()) {
         node(POD_LABEL) {
@@ -46,22 +47,22 @@ def call() {
             }
         }
 
-    podTemplate(yaml: podTempClaranet.getTemplate()) {
-        node(POD_LABEL) {
-
-            stage('Create secret for docker hub') {
-                withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/github-token', secretValues: [[vaultKey: 'token']]],
-                              [path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]], [path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
-
-                    stageOperator.deployAppToKubernetes(organization: "giahai99", token: token, resporitory: "devops-first-prj.git", clusterName: "cluster-1", serviceAccountKey: key,
-                            secretName: "db-user-pass", secrets: [username: username, password: password], namespace: "devops-tools")
-                }
-            }
-
-            stage('Clean up after run') {
-                stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"])
-            }
-
-        }
-    }
+//    podTemplate(yaml: podTempClaranet.getTemplate()) {
+//        node(POD_LABEL) {
+//
+//            stage('Create secret for docker hub') {
+//                withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/github-token', secretValues: [[vaultKey: 'token']]],
+//                              [path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]], [path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
+//
+//                    stageOperator.deployAppToKubernetes(organization: "giahai99", token: token, resporitory: "devops-first-prj.git", clusterName: "cluster-1", serviceAccountKey: key,
+//                            secretName: "db-user-pass", secrets: [username: username, password: password], namespace: "devops-tools")
+//                }
+//            }
+//
+//            stage('Clean up after run') {
+//                stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"])
+//            }
+//
+//        }
+//    }
 }

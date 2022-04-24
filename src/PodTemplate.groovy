@@ -2,8 +2,7 @@
 class PodTemplate {
 
     String volumesField = """
-  volumes:
-  """
+  volumes:"""
 
     def getTemplate(def addContainers = [""], def addVolumes = [""]) {
         return (containersField + volumesField)
@@ -13,23 +12,23 @@ class PodTemplate {
 spec:
   containers:
   - name: jnlp
-    image: 'jenkins/inbound-agent:4.7-1'
-  """
+    image: 'jenkins/inbound-agent:4.7-1'"""
 
     def addClaranetBuilder() {
 
-        containersField += """- name: claranet
+        containersField += """
+  - name: claranet
     image: claranet/gcloud-kubectl-docker:latest
     imagePullPolicy: Always
     command:
     - cat
-    tty: true
-  """
+    tty: true"""
     }
 
     def addKanikoBuilder() {
 
-        containersField += """- name: kaniko
+        containersField += """
+  - name: kaniko
     image: gcr.io/kaniko-project/executor:debug
     imagePullPolicy: Always
     command:
@@ -38,9 +37,10 @@ spec:
     - 9999999
     volumeMounts:
     - name: jenkins-docker-cfg
-      mountPath: /kaniko/.docker  """
+      mountPath: /kaniko/.docker"""
 
-        volumesField += """- name: jenkins-docker-cfg
+        volumesField += """
+  - name: jenkins-docker-cfg
     projected:
       sources:
       - secret:
