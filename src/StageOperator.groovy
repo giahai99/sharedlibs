@@ -81,7 +81,7 @@ def deployAppToKubernetes(Map config = [:]) {
 }
 
 def deleteSecretAfterRun(Map config = [:]) {
-
+    Gcloud gcloud = new Gcloud()
     Kubectl kubectl = new Kubectl()
 
     if ( checkClusterName(config.clusterName) != null) {
