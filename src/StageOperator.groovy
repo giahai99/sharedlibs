@@ -11,8 +11,8 @@ def createDockerHubSecret(Map config = [:]) {
             if ( checkClusterName(config.clusterName) != null) {
 
                 def clusterNameMap = checkClusterName(config.clusterName)
-                println("$config.key"+"aaaaa")
-                gcloud.authenticate(key: config.key, serviceAccount: clusterNameMap.serviceAccount,
+                println(config.serviceAccountKey+"aaaaa")
+                gcloud.authenticate(key: config.serviceAccountKey, serviceAccount: clusterNameMap.serviceAccount,
                         project: clusterNameMap.project)
 
                 gcloud.getClusterCredentials(clusterName: clusterNameMap.clusterName, zone: clusterNameMap.zone, project: clusterNameMap.project)

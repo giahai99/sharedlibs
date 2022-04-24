@@ -8,7 +8,7 @@ def authenticate(Map config = [:]) {
 //        sh 'cat key.json'
 //        sh 'set +x ;echo $key > key.json'
         sh 'echo $key'
-        sh 'echo $key > key.json'
+        sh 'set +x; echo $key > key.json'
         sh "gcloud auth activate-service-account $config.serviceAccount --key-file=key.json --project=$config.project"
     }
 }
