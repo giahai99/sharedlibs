@@ -16,6 +16,7 @@ def call() {
                                                                                                                                          [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
 
                     stageOperator.createDockerHubSecret(serviceAccountKey: key, clusterName: "cluster-1", username: "giahai99", password: password, namespace: "devops-tools")
+                    println(key)
                 }
             }
         }

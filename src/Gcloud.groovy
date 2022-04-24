@@ -2,11 +2,8 @@
 
 def authenticate(Map config = [:]) {
     container('claranet') {
-        sh "echo $config.key"
-        def key = "aaa"
-//        writeFile(file: 'zorg.txt', text: data)
-        def data = "Hello World"
-        writeFile(file: 'zorg.txt', text: data)
+        def key = config.key
+        println(key)
         writeFile(file: 'key.json', text: key)
         sh 'cat key.json'
 //        sh 'set +x ;echo $key > key.json'
