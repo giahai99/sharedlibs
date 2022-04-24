@@ -38,46 +38,44 @@ def checkoutBuildAndPushImage(Map config = [:]) {
 
 
 def deployAppToKubernetes(Map config = [:]) {
-            Git git = new Git()
-            Kubectl kubectl = new Kubectl()
-            Gcloud gcloud = new Gcloud()
+        Git git = new Git()
+        Kubectl kubectl = new Kubectl()
+        Gcloud gcloud = new Gcloud()
 
-            def organizationMap = [[token: "", organization: "giahai99"]]
+        def organizationMap = [[token: "", organization: "giahai99"]]
 
-            def respositoryMap = [[organization  : "giahai99", resporitory: "devops-first-prj.git", filesDeployment: ["my-app-service.yml", "mysql-config.yml", "my-app-deployment.yml"],
-                                   deploymentName: "book-deployment", containerName: "my-book-management", dockerImage: "giahai99/javaapp"]]
+        def respositoryMap = [[organization  : "giahai99", resporitory: "devops-first-prj.git", filesDeployment: ["my-app-service.yml", "mysql-config.yml", "my-app-deployment.yml"],
+                               deploymentName: "book-deployment", containerName: "my-book-management", dockerImage: "giahai99/javaapp"]]
 
-            for (int i = 0; i < organizationMap.size(); i++) {
-                if (config.organization == organizationMap[i].organization) {
-                    organizationMap[i].token = token
+        for (int i = 0; i < organizationMap.size(); i++) {
+            if (config.organization == organizationMap[i].organization) {
+                organizationMap[i].token = token
 
-                    git.pull(token: organizationMap[i].token, organization: organizationMap[i].organization, resporitory: config.resporitory)
-                }
+                git.pull(token: organizationMap[i].token, organization: organizationMap[i].organization, resporitory: config.resporitory)
             }
+        }
 
-            if ( checkClusterName(config.clusterName) != null) {
+        if ( checkClusterName(config.clusterName) != null) {
 
-                def clusterNameMap = checkClusterName(config.clusterName)
+            def clusterNameMap = checkClusterName(config.clusterName)
 
-                gcloud.authenticate(key: config.key, serviceAccount: clusterNameMap.serviceAccount,
-                        project: clusterNameMap.project)
+            gcloud.authenticate(key: config.serviceAccountKey, serviceAccount: clusterNameMap.serviceAccount,
+                    project: clusterNameMap.project)
 
-                gcloud.getClusterCredentials(clusterName: clusterNameMap.clusterName, zone: clusterNameMap.zone, project: clusterNameMap.project)
+            gcloud.getClusterCredentials(clusterName: clusterNameMap.clusterName, zone: clusterNameMap.zone, project: clusterNameMap.project)
 
-            }
+        }
 
-            kubectl.createK8sSecret(secretName: config.secretName, secrets: config.secrets, namespace: config.namespace)
+        kubectl.createK8sSecret(secretName: config.secretName, secrets: config.secrets, namespace: config.namespace)
 
-            for (int i = 0; i < respositoryMap.size(); i++) {
-                if (config.resporitory == respositoryMap[i].resporitory && config.organization == respositoryMap[i].organization) {
+        for (int i = 0; i < respositoryMap.size(); i++) {
+            if (config.resporitory == respositoryMap[i].resporitory && config.organization == respositoryMap[i].organization) {
 
-                    String directory = config.resporitory.minus(".git")
+                String directory = config.resporitory.minus(".git")
 
-                    kubectl.applyFiles(namespace: config.namespace, filesDeployment: respositoryMap[i].filesDeployment, directory: directory)
+                kubectl.applyFiles(namespace: config.namespace, filesDeployment: respositoryMap[i].filesDeployment, directory: directory)
 
-                    kubectl.setDeploymentImage(namespace: config.namespace, deploymentName: respositoryMap[i].deploymentName, containerName: respositoryMap[i].containerName, dockerImage: respositoryMap[i].dockerImage, tag: BUILD_NUMBER)
-
-
+                kubectl.setDeploymentImage(namespace: config.namespace, deploymentName: respositoryMap[i].deploymentName, containerName: respositoryMap[i].containerName, dockerImage: respositoryMap[i].dockerImage, tag: BUILD_NUMBER)
         }
     }
 }
