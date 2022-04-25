@@ -1,30 +1,35 @@
 #!/usr/bin/env groovy
 
 def createDockerHubSecret(Map config = [:]) {
-    Kubectl kubectl = new Kubectl()
-    Gcloud gcloud = new Gcloud()
+    stage('Create a secret for docker hub') {
+        withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
+                                                                                                                                 [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+            Kubectl kubectl = new Kubectl()
+            Gcloud gcloud = new Gcloud()
 
-    def userNameMaps = [ [ username : "giahai99", dockerEmail : "Haidepzai_kut3@yahoo.com" ] ]
+            def userNameMaps = [[username: "giahai99", dockerEmail: "Haidepzai_kut3@yahoo.com"]]
 
-        // authenticate with service account and get kubectl config file
+            // authenticate with service account and get kubectl config file
 
-            if ( checkClusterName(config.clusterName) != null) {
+            if (checkClusterName(config.clusterName) != null) {
 
                 def clusterNameMap = checkClusterName(config.clusterName)
 
-                gcloud.authenticate(key: config.serviceAccountKey, serviceAccount: clusterNameMap.serviceAccount,
+                gcloud.authenticate(key: key, serviceAccount: clusterNameMap.serviceAccount,
                         project: clusterNameMap.project)
 
                 gcloud.getClusterCredentials(clusterName: clusterNameMap.clusterName, zone: clusterNameMap.zone, project: clusterNameMap.project)
 
-        }
+            }
 
-        // create secret for docker hub
-        for (int i = 0; i < userNameMaps.size(); i++) {
-            if (config.username == userNameMaps[i].username) {
+            // create secret for docker hub
+            for (int i = 0; i < userNameMaps.size(); i++) {
+                if (config.username == userNameMaps[i].username) {
 
-                kubectl.createDockerRegistrySecret(username: userNameMaps[i].username, password: config.password, dockerEmail: userNameMaps[i].dockerEmail, namespace: config.namespace)
+                    kubectl.createDockerRegistrySecret(username: userNameMaps[i].username, password: password, dockerEmail: userNameMaps[i].dockerEmail, namespace: config.namespace)
 
+                }
+            }
         }
     }
 }
@@ -109,6 +114,23 @@ private checkClusterName (String clusterName) {
         return null
     }
 }
+//def createASecretForDockerHub {
+//    stage('Create a secret for docker hub') {
+//        withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/service-account', secretValues: [[vaultKey: 'key']]],
+//                                                                                                                                 [path: 'kv/dockerhub-password', secretValues: [[vaultKey: 'password']]]]) {
+//
+//            stageOperator.createDockerHubSecret(serviceAccountKey: key, clusterName: "cluster-1", username: "giahai99", password: password, namespace: "devops-tools")
+//
+//
+//        }
+//    }
+//}
+
+
+
+
+
+
 
 
 
