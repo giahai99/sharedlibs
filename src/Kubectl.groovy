@@ -25,15 +25,6 @@ def createK8sSecret(Map config = [:]) {
     }
 }
 
-//def createGenericSecret(Map config = [:]) {
-//    container('claranet') {
-//        sh "kubectl --namespace=devops-tools create secret generic $config.secretName --from-literal=username=$config.username --from-literal=password=$config.password"
-//    }
-//}
-
-
-
-
 def setDeploymentImage(Map config = [:]) {
     container('claranet') {
         sh "kubectl --namespace=$config.namespace set image deployment/$config.deploymentName $config.containerName=$config.dockerImage:$config.tag"
