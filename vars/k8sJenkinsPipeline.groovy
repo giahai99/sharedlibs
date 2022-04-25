@@ -26,7 +26,7 @@ def call() {
                     stageOperator.checkoutBuildAndPushImage(branch: "main", url: "https://github.com/giahai99/devops-first-prj.git", dockerImage: "giahai99/javaapp")
                 }
 
-                stage('Create secret for docker hub') {
+                stage('Create a secret for MySQL') {
                     withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/github-token', secretValues: [[vaultKey: 'token']]],
                                                                                                                                              [path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]], [path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
 
