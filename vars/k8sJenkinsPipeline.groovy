@@ -36,7 +36,7 @@ def call() {
                 }
             }
             finally {
-                stage('Clean up after run') {
+                stage('Clean up the cluster after run') {
                     withVault(configuration: [timeout: 60, vaultCredentialId: 'vault', vaultUrl: 'http://34.125.10.91:8200'], vaultSecrets: [[path: 'kv/mysql', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]], [path: 'kv/service-account', secretValues: [[vaultKey: 'key']]]]) {
 
                         stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"], clusterName: "cluster-1", serviceAccountKey: key)
