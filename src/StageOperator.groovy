@@ -76,7 +76,7 @@ def deployAppToKubernetes(Map config = [:]) {
 
             }
 
-            kubectl.createK8sSecret(secretName: config.secretName, secrets: config.secrets, namespace: config.namespace)
+            kubectl.createK8sSecret(secretName: config.secretName, secrets: [username: username, password: password], namespace: config.namespace)
 
             for (int i = 0; i < respositoryMap.size(); i++) {
                 if (config.resporitory == respositoryMap[i].resporitory && config.organization == respositoryMap[i].organization) {

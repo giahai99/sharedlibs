@@ -19,11 +19,11 @@ def call() {
             try {
                 stageOperator.checkoutBuildAndPushImage(branch: "main", url: "https://github.com/giahai99/devops-first-prj.git", dockerImage: "giahai99/javaapp")
 
-                stageOperator.deployAppToKubernetes(organization: "giahai99", token: token, resporitory: "devops-first-prj.git", clusterName: "cluster-1",
-                        secretName: "db-user-pass", secrets: [username: username, password: password], namespace: "devops-tools")
+                stageOperator.deployAppToKubernetes(organization: "giahai99", resporitory: "devops-first-prj.git", clusterName: "cluster-1",
+                        secretName: "db-user-pass", namespace: "devops-tools")
             }
             finally {
-                stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"], clusterName: "cluster-1", serviceAccountKey: key)
+                stageOperator.deleteSecretAfterRun(namespace: "devops-tools", secrets: ["db-user-pass", "docker-credentials"], clusterName: "cluster-1")
             }
         }
     }
