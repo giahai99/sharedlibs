@@ -107,7 +107,7 @@ def deleteSecretAfterRun(Map config = [:]) {
 
                 def clusterNameMap = checkClusterName(config.clusterName)
 
-                gcloud.authenticate(key: config.serviceAccountKey, serviceAccount: clusterNameMap.serviceAccount,
+                gcloud.authenticate(key: key, serviceAccount: clusterNameMap.serviceAccount,
                         project: clusterNameMap.project)
 
                 gcloud.getClusterCredentials(clusterName: clusterNameMap.clusterName, zone: clusterNameMap.zone, project: clusterNameMap.project)
